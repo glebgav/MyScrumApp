@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="task"
+            type="com.example.myscrumapp.model.entity.Task" />
+        <variable
+            name="listener"
+            type="com.example.myscrumapp.view.listener.TaskDetailsListener" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/taskLayout"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:onClick="@{listener::onTaskDetailsClicked}"
+        android:background="@drawable/back"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/taskId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="@{task.taskId}" />
+
+        <TextView
+            android:id="@+id/taskTitle"
+            style="@style/TaskTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:text="@{task.title}" />
+
+        <TextView
+            android:id="@+id/taskDescription"
+            style="@style/TaskDescription"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="4dp"
+            android:text="@{task.description}" />
+
+
+        <TextView
+            android:id="@+id/assignedUser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:text="@{task.title}" />
+    </LinearLayout>
+</layout>

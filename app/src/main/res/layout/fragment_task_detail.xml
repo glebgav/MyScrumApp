@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="task"
+            type="com.example.myscrumapp.model.entity.Task" />
+    </data>
+
+    <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".view.fragment.TaskDetailsFragment">
+
+        <ImageView
+            android:id="@+id/taskImageTemp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_margin="10dp"
+            android:minHeight="200dp"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/ic_myscrum_icon_round">
+
+        </ImageView>
+
+        <TextView
+            android:id="@+id/taskTitleDetails"
+            style="@style/TaskTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/taskImageTemp"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="4dp"
+            android:text="@{task.title}" />
+
+        <TextView
+            android:id="@+id/taskDescriptionDetails"
+            style="@style/TaskDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/taskStatusDetails"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="4dp"
+            android:text="@{task.description}" />
+
+        <TextView
+            android:id="@+id/taskStatusDetails"
+            style="@style/TaskDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/taskTitleDetails"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="4dp"
+            android:text="@{String.valueOf(task.status)}" />
+
+    </RelativeLayout>
+</layout>
