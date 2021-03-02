@@ -43,7 +43,7 @@ public class TaskDetailsFragment extends Fragment {
         }
 
         viewModel = ViewModelProviders.of(this).get(TaskDetailsViewModel.class);
-        viewModel.fetch(taskUuid);
+        viewModel.getTask(taskUuid);
 
         observeViewModel();
 

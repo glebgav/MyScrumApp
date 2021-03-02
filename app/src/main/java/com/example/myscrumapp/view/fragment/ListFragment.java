@@ -66,9 +66,7 @@ public class ListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         viewModel = ViewModelProviders.of(this).get(ListViewModel.class);
-        viewModel.refresh();
 
         tasksList.setLayoutManager(new LinearLayoutManager(getContext()));
         tasksList.setAdapter(taskListAdapter);
@@ -86,10 +84,15 @@ public class ListFragment extends Fragment {
     }
 
     private void observeViewModel(){
-        viewModel.getTasks().observe(getViewLifecycleOwner(), tasks -> {
+        viewModel.getTasksLiveData().observe(getViewLifecycleOwner(), tasks -> {
             if(tasks instanceof List){
+                viewModel.getIsLoading().postValue(false);
+                viewModel.getTaskLoadError().postValue(false);
                 tasksList.setVisibility(View.VISIBLE);
                 taskListAdapter.updateTasksList(tasks);
+            }else
+            {
+                viewModel.getTaskLoadError().postValue(true);
             }
         });
 
@@ -99,7 +102,7 @@ public class ListFragment extends Fragment {
             }
         });
 
-        viewModel.getLoading().observe(getViewLifecycleOwner(), isLoading -> {
+        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             if(isLoading instanceof Boolean){
                 loadingView.setVisibility(isLoading?View.VISIBLE: View.GONE);
                 if(isLoading) {

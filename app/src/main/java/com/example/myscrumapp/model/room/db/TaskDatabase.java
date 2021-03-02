@@ -13,12 +13,13 @@ import com.example.myscrumapp.model.room.dao.TaskDao;
 public abstract class TaskDatabase extends RoomDatabase {
     private static TaskDatabase instance = null;
 
-    public static TaskDatabase getInstance(Context context){
+    public static synchronized TaskDatabase getInstance(Context context){
         if(instance == null){
             instance  = Room.databaseBuilder(
                     context.getApplicationContext(),
                     TaskDatabase.class,
                     "tasksdatabase")
+                    .fallbackToDestructiveMigration()
                     .build();
         }
         return instance;

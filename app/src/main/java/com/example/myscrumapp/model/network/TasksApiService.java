@@ -24,6 +24,6 @@ public class TasksApiService {
     }
 
     public Single<List<Task>> getTasks(){
-        return tasksApi.getTasks("Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnbGViZ2F2Z0BnbWFpbC5jb20iLCJleHAiOjE2MTQ2MDkyODV9.hByszvjw-Q5IXBu6SqO2KalG3o0eEIUkY7EpiZLOxQwekLOyr1OtTj8QsWdeKHAeJYk2Wwv8wg0QcbJNDBA7Cw");
+        return tasksApi.getTasks("Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmYWZhQGdtYWlsLmNvbSIsImV4cCI6MTYxNTQ5OTQwMn0.HzizWqZAeR42etXrY0XttfNZluBTn5vnHSm9EHPiojIcmW7iemQDaLERFdahZpNPzE5Kne8hHC7ao3HZVAFGPg");
     }
 }
