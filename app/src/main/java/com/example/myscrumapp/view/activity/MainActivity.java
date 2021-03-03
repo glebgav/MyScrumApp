@@ -1,4 +1,4 @@
-package com.example.myscrumapp.view;
+package com.example.myscrumapp.view.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -11,8 +11,10 @@ import androidx.navigation.ui.NavigationUI;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.widget.Toast;
 
 import com.example.myscrumapp.R;
+import com.example.myscrumapp.utils.SharedPreferencesHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -40,11 +42,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-/*        final Menu menu = navigationView.getMenu();
-        for (int i = 1; i <= 3; i++) {
 
-            menu.add("Runtime item "+ i);
-        }*/
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.homeFragment, R.id.teamListFragment,R.id.taskListFragment)
                 .setOpenableLayout(drawer)
@@ -67,4 +65,16 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if(!SharedPreferencesHelper.getInstance(getApplicationContext()).isLoggedIn())
+        {
+            Intent intent = new Intent(MainActivity.this,LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+            startActivity(intent);
+        }
+    }
 }

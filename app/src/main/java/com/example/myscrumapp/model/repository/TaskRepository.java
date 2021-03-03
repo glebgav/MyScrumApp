@@ -5,7 +5,7 @@ import android.app.Application;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.myscrumapp.model.entity.Task;
-import com.example.myscrumapp.model.network.TasksApiService;
+import com.example.myscrumapp.model.network.ApiService;
 import com.example.myscrumapp.model.room.dao.TaskDao;
 import com.example.myscrumapp.model.room.db.MyDatabase;
 import com.example.myscrumapp.utils.SharedPreferencesHelper;
@@ -26,7 +26,7 @@ public class TaskRepository {
     private final TaskDao taskDao;
     private MutableLiveData<List<Task>> allTasks  = new MutableLiveData<>();
     private MutableLiveData<Task> task = new MutableLiveData<>();
-    private final TasksApiService tasksApiService;
+    private final ApiService tasksApiService;
     private final TaskRunner taskRunner = new TaskRunner();
     private final SharedPreferencesHelper preferencesHelper;
     private final CompositeDisposable disposable = new CompositeDisposable();
@@ -36,7 +36,7 @@ public class TaskRepository {
         MyDatabase database = MyDatabase.getInstance(application);
         preferencesHelper = SharedPreferencesHelper.getInstance(application);
         taskDao = database.taskDao();
-        tasksApiService = new TasksApiService();
+        tasksApiService = ApiService.getInstance();
     }
 
     public MutableLiveData<List<Task>> getAllTasks(){

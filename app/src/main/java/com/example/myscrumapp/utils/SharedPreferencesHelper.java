@@ -5,9 +5,19 @@ import android.content.SharedPreferences;
 
 import androidx.preference.PreferenceManager;
 
+import com.example.myscrumapp.model.entity.LoggedInUser;
+
 public class SharedPreferencesHelper {
 
     private static final String PREF_TIME = "Pref time";
+    private static final String USER_ID = "UserId";
+    private static final String USER_FIRST_NAME = "UserId";
+    private static final String USER_EMAIL = "UserId";
+    private static final String TOKEN = "token";
+    private static final String DEFAULT_NONE = "token";
+
+
+
     private static SharedPreferencesHelper instance;
     private SharedPreferences preferences;
 
@@ -27,5 +37,34 @@ public class SharedPreferencesHelper {
 
     public Long getUpdateTime(){
         return preferences.getLong(PREF_TIME,0);
+    }
+
+    public void saveUser(LoggedInUser loggedInUser){
+        SharedPreferences.Editor editor = preferences.edit();
+
+        editor.putString(USER_ID,loggedInUser.userId);
+        editor.putString(USER_FIRST_NAME,loggedInUser.firstName);
+        editor.putString(USER_EMAIL,loggedInUser.email);
+        editor.putString(TOKEN,loggedInUser.token);
+
+        editor.apply();
+
+    }
+
+    public boolean isLoggedIn(){
+        return !preferences.getString(USER_ID, DEFAULT_NONE).equals(DEFAULT_NONE);
+    }
+
+    public LoggedInUser getUser(){
+        return new LoggedInUser(preferences.getString(USER_FIRST_NAME, DEFAULT_NONE),
+                preferences.getString(USER_ID, DEFAULT_NONE),
+                preferences.getString(USER_EMAIL, DEFAULT_NONE),
+                preferences.getString(TOKEN, DEFAULT_NONE));
+    }
+
+    public void clear(){
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
+        editor.apply();
     }
 }
