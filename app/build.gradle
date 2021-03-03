@@ -51,6 +51,9 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:$lifecycleExtensionVersion"
 
     implementation "com.jakewharton:butterknife:$butterknifeVersion"
+    implementation 'androidx.annotation:annotation:1.1.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0'
     annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
 
     implementation "androidx.room:room-runtime:$roomVersion"

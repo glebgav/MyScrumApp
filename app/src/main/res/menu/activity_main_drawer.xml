@@ -2,7 +2,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
-
     <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/homeFragment"
+            android:icon="@drawable/ic_details"
+            android:title="@string/home" />
+
+        <item
+            android:id="@+id/teamListFragment"
+            android:icon="@drawable/ic_details"
+            android:title="@string/my_teams" />
+
+        <item
+            android:id="@+id/taskListFragment"
+            android:icon="@drawable/ic_details"
+            android:title="@string/my_tasks" />
     </group>
+
 </menu>

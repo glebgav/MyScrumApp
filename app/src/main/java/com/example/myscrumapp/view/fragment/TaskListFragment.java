@@ -6,9 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -21,7 +19,7 @@ import android.widget.TextView;
 
 import com.example.myscrumapp.R;
 import com.example.myscrumapp.view.adapter.TaskListAdapter;
-import com.example.myscrumapp.viewmodel.ListViewModel;
+import com.example.myscrumapp.viewmodel.TaskListViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +28,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class ListFragment extends Fragment {
-    private ListViewModel viewModel;
+public class TaskListFragment extends Fragment {
+    private TaskListViewModel viewModel;
     private TaskListAdapter taskListAdapter = new TaskListAdapter(new ArrayList<>());
 
     @SuppressLint("NonConstantResourceId")
@@ -50,7 +48,7 @@ public class ListFragment extends Fragment {
     @BindView(R.id.refreshLayout)
     SwipeRefreshLayout refreshLayout;
 
-    public ListFragment() {
+    public TaskListFragment() {
         // Required empty public constructor
     }
 
@@ -58,7 +56,7 @@ public class ListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_task_list, container, false);
         ButterKnife.bind(this,view);
         return view;
     }
@@ -66,7 +64,7 @@ public class ListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        viewModel = ViewModelProviders.of(this).get(ListViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(TaskListViewModel.class);
 
         tasksList.setLayoutManager(new LinearLayoutManager(getContext()));
         tasksList.setAdapter(taskListAdapter);

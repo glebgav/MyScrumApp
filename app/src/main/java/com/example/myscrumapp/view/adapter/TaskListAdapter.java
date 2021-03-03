@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myscrumapp.R;
 import com.example.myscrumapp.databinding.ItemTaskBinding;
 import com.example.myscrumapp.model.entity.Task;
+import com.example.myscrumapp.view.fragment.TaskListFragmentDirections;
 import com.example.myscrumapp.view.listener.TaskDetailsListener;
-import com.example.myscrumapp.view.fragment.ListFragmentDirections;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +69,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
     public void onTaskDetailsClicked(View v) {
         String UuidString = ((TextView)v.findViewById(R.id.taskId)).getText().toString();
 
-        ListFragmentDirections.ActionTaskDetail action = ListFragmentDirections.actionTaskDetail();
+        TaskListFragmentDirections.ActionTaskDetail action = TaskListFragmentDirections.actionTaskDetail();
         action.setTaskUuid(UuidString);
         Navigation.findNavController(v).navigate(action);
 

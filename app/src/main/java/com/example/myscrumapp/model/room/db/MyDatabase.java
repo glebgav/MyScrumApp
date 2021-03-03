@@ -7,18 +7,20 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import com.example.myscrumapp.model.entity.Task;
+import com.example.myscrumapp.model.entity.Team;
 import com.example.myscrumapp.model.room.dao.TaskDao;
+import com.example.myscrumapp.model.room.dao.TeamDao;
 
-@Database(entities = Task.class,version = 1)
-public abstract class TaskDatabase extends RoomDatabase {
-    private static TaskDatabase instance = null;
+@Database(entities = {Task.class, Team.class}, version = 1)
+public abstract class MyDatabase extends RoomDatabase {
+    private static MyDatabase instance = null;
 
-    public static synchronized TaskDatabase getInstance(Context context){
+    public static synchronized MyDatabase getInstance(Context context){
         if(instance == null){
             instance  = Room.databaseBuilder(
                     context.getApplicationContext(),
-                    TaskDatabase.class,
-                    "tasksdatabase")
+                    MyDatabase.class,
+                    "mydatabase")
                     .fallbackToDestructiveMigration()
                     .build();
         }
@@ -26,4 +28,5 @@ public abstract class TaskDatabase extends RoomDatabase {
     }
 
     public abstract TaskDao taskDao();
+    public abstract TeamDao teamDao();
 }

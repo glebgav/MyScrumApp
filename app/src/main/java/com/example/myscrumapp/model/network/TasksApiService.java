@@ -1,6 +1,7 @@
 package com.example.myscrumapp.model.network;
 
 import com.example.myscrumapp.model.entity.Task;
+import com.example.myscrumapp.model.entity.Team;
 
 import java.util.List;
 
@@ -13,6 +14,8 @@ public class TasksApiService {
     private static final String BASE_URL = "http://192.168.1.10:8080";
 
     private TasksApi tasksApi;
+    private TeamsApi teamsApi;
+
 
     public TasksApiService(){
         tasksApi = new Retrofit.Builder()
@@ -26,4 +29,10 @@ public class TasksApiService {
     public Single<List<Task>> getTasks(){
         return tasksApi.getTasks("Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmYWZhQGdtYWlsLmNvbSIsImV4cCI6MTYxNTQ5OTQwMn0.HzizWqZAeR42etXrY0XttfNZluBTn5vnHSm9EHPiojIcmW7iemQDaLERFdahZpNPzE5Kne8hHC7ao3HZVAFGPg");
     }
+
+    public Single<List<Team>> getTeams(){
+        return teamsApi.getTeams("Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmYWZhQGdtYWlsLmNvbSIsImV4cCI6MTYxNTQ5OTQwMn0.HzizWqZAeR42etXrY0XttfNZluBTn5vnHSm9EHPiojIcmW7iemQDaLERFdahZpNPzE5Kne8hHC7ao3HZVAFGPg");
+    }
+
+
 }

@@ -8,6 +8,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 
@@ -29,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show());
@@ -37,8 +40,13 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
+/*        final Menu menu = navigationView.getMenu();
+        for (int i = 1; i <= 3; i++) {
+
+            menu.add("Runtime item "+ i);
+        }*/
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                )
+                R.id.homeFragment, R.id.teamListFragment,R.id.taskListFragment)
                 .setOpenableLayout(drawer)
                 .build();
         navController = Navigation.findNavController(this,R.id.fragment);

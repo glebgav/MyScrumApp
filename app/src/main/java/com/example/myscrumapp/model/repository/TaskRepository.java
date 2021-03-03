@@ -7,10 +7,9 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.model.network.TasksApiService;
 import com.example.myscrumapp.model.room.dao.TaskDao;
-import com.example.myscrumapp.model.room.db.TaskDatabase;
+import com.example.myscrumapp.model.room.db.MyDatabase;
 import com.example.myscrumapp.utils.SharedPreferencesHelper;
 import com.example.myscrumapp.utils.TaskRunner;
-import com.example.myscrumapp.viewmodel.TaskDetailsViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +33,7 @@ public class TaskRepository {
 
 
     public TaskRepository(Application application){
-        TaskDatabase database = TaskDatabase.getInstance(application);
+        MyDatabase database = MyDatabase.getInstance(application);
         preferencesHelper = SharedPreferencesHelper.getInstance(application);
         taskDao = database.taskDao();
         tasksApiService = new TasksApiService();

@@ -13,14 +13,14 @@ import java.util.List;
 import lombok.Getter;
 
 @Getter
-public class ListViewModel extends AndroidViewModel {
+public class TaskListViewModel extends AndroidViewModel {
 
     private MutableLiveData<List<Task>> tasks;
     private MutableLiveData<Boolean> taskLoadError = new MutableLiveData<>();
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private TaskRepository taskRepository;
 
-    public ListViewModel(@NonNull Application application) {
+    public TaskListViewModel(@NonNull Application application) {
         super(application);
         taskRepository = new TaskRepository(application);
         tasks = taskRepository.getAllTasks();

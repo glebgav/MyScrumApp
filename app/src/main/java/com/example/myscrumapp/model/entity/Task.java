@@ -1,6 +1,7 @@
 package com.example.myscrumapp.model.entity;
 
 import androidx.room.ColumnInfo;
+import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -26,6 +27,10 @@ public class Task {
     private String description;
 
     private int status;
+
+    @Embedded
+    private User userDetails;
+
 
     public Task(String taskId, String title, int status, String description) {
         this.taskId = taskId;
@@ -72,5 +77,13 @@ public class Task {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public User getUserDetails() {
+        return userDetails;
+    }
+
+    public void setUserDetails(User userDetails) {
+        this.userDetails = userDetails;
     }
 }
