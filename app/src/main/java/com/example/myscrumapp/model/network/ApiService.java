@@ -11,7 +11,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiService {
-    private static final String BASE_URL = "http://192.168.1.10:8080";
+    private static final String BASE_URL = "http://192.168.1.44:8080";
 
     private static  ApiService instance;
     private final Retrofit retrofit;
@@ -41,13 +41,6 @@ public class ApiService {
         return retrofit.create(TeamsApi.class);
     }
 
-    public Single<List<Task>> getTasks(){
-        return getTasksApi().getTasks("Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmYWZhQGdtYWlsLmNvbSIsImV4cCI6MTYxNTQ5OTQwMn0.HzizWqZAeR42etXrY0XttfNZluBTn5vnHSm9EHPiojIcmW7iemQDaLERFdahZpNPzE5Kne8hHC7ao3HZVAFGPg");
-    }
-
-    public Single<List<Team>> getTeams(){
-        return getTeamsApi().getTeams("Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmYWZhQGdtYWlsLmNvbSIsImV4cCI6MTYxNTQ5OTQwMn0.HzizWqZAeR42etXrY0XttfNZluBTn5vnHSm9EHPiojIcmW7iemQDaLERFdahZpNPzE5Kne8hHC7ao3HZVAFGPg");
-    }
 
 
 }

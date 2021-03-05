@@ -1,32 +1,32 @@
 package com.example.myscrumapp.model.repository;
 
 import android.app.Application;
-
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.myscrumapp.model.entity.LoggedInUser;
 import com.example.myscrumapp.model.entity.Task;
+import com.example.myscrumapp.model.entity.Team;
 import com.example.myscrumapp.model.network.ApiService;
 import com.example.myscrumapp.model.room.dao.TaskDao;
+import com.example.myscrumapp.model.room.dao.TeamDao;
 import com.example.myscrumapp.model.room.db.MyDatabase;
+import com.example.myscrumapp.utils.GlobalConstants;
 import com.example.myscrumapp.utils.SharedPreferencesHelper;
 import com.example.myscrumapp.utils.TaskRunner;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 public class TaskRepository {
-    private static final Long refreshTime = 5*60*100*1000*1000L;
 
     private final TaskDao taskDao;
     private MutableLiveData<List<Task>> allTasks  = new MutableLiveData<>();
     private MutableLiveData<Task> task = new MutableLiveData<>();
-    private final ApiService tasksApiService;
+    private final ApiService apiService;
     private final TaskRunner taskRunner = new TaskRunner();
     private final SharedPreferencesHelper preferencesHelper;
     private final CompositeDisposable disposable = new CompositeDisposable();
@@ -36,13 +36,14 @@ public class TaskRepository {
         MyDatabase database = MyDatabase.getInstance(application);
         preferencesHelper = SharedPreferencesHelper.getInstance(application);
         taskDao = database.taskDao();
-        tasksApiService = ApiService.getInstance();
+        apiService = ApiService.getInstance();
     }
+
 
     public MutableLiveData<List<Task>> getAllTasks(){
         Long updateTime = preferencesHelper.getUpdateTime();
         Long currentTime = System.nanoTime();
-        if(updateTime != 0 && currentTime -updateTime < refreshTime) {
+        if(updateTime != 0 && currentTime -updateTime < GlobalConstants.REFRESH_TIME) {
             return fetchFromDatabase();
         }else{
             return fetchFromRemote();
@@ -50,7 +51,7 @@ public class TaskRepository {
     }
 
     public MutableLiveData<Task> getTask(String taskId){
-        taskRunner.executeAsync(new getTaskByIdTask(taskDao, taskId), this::taskRetrieved);
+        taskRunner.executeAsync(new GetTaskByIdTask(taskDao, taskId), this::taskRetrieved);
         return task;
     }
 
@@ -67,34 +68,39 @@ public class TaskRepository {
         fetchFromRemote();
     }
 
+
     private MutableLiveData<List<Task>> fetchFromDatabase(){
-        taskRunner.executeAsync(new getAllTasksFromLocalTask(taskDao), this::tasksRetrieved);
+        taskRunner.executeAsync(new GetAllTasksFromLocalTask(taskDao), this::tasksRetrieved);
         return allTasks;
     }
+
 
     private MutableLiveData<List<Task>> fetchFromRemote() {
-        disposable.add(
-                tasksApiService.getTasks()
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<List<Task>>() {
-                            @Override
-                            public void onSuccess(@io.reactivex.annotations.NonNull List<Task> tasksList) {
-                                taskRunner.executeAsync(new InsertTasksFromRemoteToLocalTask(taskDao, tasksList), (data) ->{
-                                    tasksRetrieved(data);
-                                    preferencesHelper.saveUpdateTime(System.nanoTime());
-                                });
-                            }
+        LoggedInUser user = preferencesHelper.getUser();
+            disposable.add(
+                    apiService.getTasksApi().getTeamsTasks(user.token,user.userId)
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeWith(new DisposableSingleObserver<List<Task>>() {
+                                @Override
+                                public void onSuccess(@io.reactivex.annotations.NonNull List<Task> tasksList) {
+                                    taskRunner.executeAsync(new InsertTasksFromRemoteToLocalTask(taskDao, tasksList), (data) ->{
+                                        tasksRetrieved(data);
+                                        preferencesHelper.saveUpdateTime(System.nanoTime());
+                                    });
+                                }
 
-                            @Override
-                            public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                                e.printStackTrace();
-                            }
-                        })
-        );
+                                @Override
+                                public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                                    e.printStackTrace();
+                                }
+                            })
+
+            );
         return allTasks;
-
     }
+
+
 
     private static class InsertTasksFromRemoteToLocalTask implements Callable<List<Task>> {
 
@@ -108,7 +114,7 @@ public class TaskRepository {
         }
 
         @Override
-        public List<Task> call() throws Exception {
+        public List<Task> call() {
             List<Task> list = lists[0];
             taskDao.deleteAllTasks();
 
@@ -125,30 +131,30 @@ public class TaskRepository {
         }
     }
 
-    private static class getAllTasksFromLocalTask implements Callable<List<Task>>{
+    private static class GetAllTasksFromLocalTask implements Callable<List<Task>>{
         private final TaskDao taskDao;
-        public getAllTasksFromLocalTask(TaskDao taskDao){
+        public GetAllTasksFromLocalTask(TaskDao taskDao){
             this.taskDao = taskDao;
         }
 
         @Override
-        public List<Task> call() throws Exception {
+        public List<Task> call() {
             return taskDao.getAllTasks();
         }
     }
 
-    private static class getTaskByIdTask implements Callable<Task> {
+    private static class GetTaskByIdTask implements Callable<Task> {
         private final String taskId;
         private final TaskDao taskDao;
 
-        public getTaskByIdTask(TaskDao taskDao, String taskId)
+        public GetTaskByIdTask(TaskDao taskDao, String taskId)
         {
             this.taskDao = taskDao;
             this.taskId = taskId;
         }
 
         @Override
-        public Task call() throws Exception {
+        public Task call() {
             return taskDao.getTaskByTaskId(taskId);
         }
     }

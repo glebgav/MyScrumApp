@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="team"
+            type="com.example.myscrumapp.model.entity.Team" />
+        <variable
+            name="listener"
+            type="com.example.myscrumapp.view.listener.TaskListListener" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/taskLayout"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:onClick="@{listener::onTeamDetailsClicked}"
+        android:background="@drawable/back"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/teamId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="@{team.teamId}" />
+
+        <TextView
+            android:id="@+id/teamName"
+            style="@style/TaskTitle"
+            android:layout_width="match_parent"
+            android:layout_height="74dp"
+            android:padding="4dp"
+            android:text="@{team.name}" />
+
+
+    </LinearLayout>
+</layout>

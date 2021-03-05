@@ -29,14 +29,18 @@ public class Task {
     private int status;
 
     @Embedded
-    private User userDetails;
+    private UserInTask userDetails;
 
+    @Embedded
+    private TeamInTask teamDetails;
 
-    public Task(String taskId, String title, int status, String description) {
+    public Task(String taskId, String title, String description, int status, UserInTask userDetails, TeamInTask teamDetails) {
         this.taskId = taskId;
         this.title = title;
-        this.status = status;
         this.description = description;
+        this.status = status;
+        this.userDetails = userDetails;
+        this.teamDetails = teamDetails;
     }
 
     public int getId() {
@@ -79,11 +83,19 @@ public class Task {
         this.status = status;
     }
 
-    public User getUserDetails() {
+    public UserInTask getUserDetails() {
         return userDetails;
     }
 
-    public void setUserDetails(User userDetails) {
+    public void setUserDetails(UserInTask userDetails) {
         this.userDetails = userDetails;
+    }
+
+    public TeamInTask getTeamDetails() {
+        return teamDetails;
+    }
+
+    public void setTeamDetails(TeamInTask teamDetails) {
+        this.teamDetails = teamDetails;
     }
 }

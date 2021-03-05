@@ -10,11 +10,11 @@ import com.example.myscrumapp.model.entity.LoggedInUser;
 public class SharedPreferencesHelper {
 
     private static final String PREF_TIME = "Pref time";
-    private static final String USER_ID = "UserId";
-    private static final String USER_FIRST_NAME = "UserId";
-    private static final String USER_EMAIL = "UserId";
+    private static final String USER_ID = "userId";
+    private static final String USER_FIRST_NAME = "firstName";
+    private static final String USER_EMAIL = "email";
     private static final String TOKEN = "token";
-    private static final String DEFAULT_NONE = "token";
+    private static final String DEFAULT_NONE = "NONE";
 
 
 
@@ -42,8 +42,8 @@ public class SharedPreferencesHelper {
     public void saveUser(LoggedInUser loggedInUser){
         SharedPreferences.Editor editor = preferences.edit();
 
-        editor.putString(USER_ID,loggedInUser.userId);
         editor.putString(USER_FIRST_NAME,loggedInUser.firstName);
+        editor.putString(USER_ID,loggedInUser.userId);
         editor.putString(USER_EMAIL,loggedInUser.email);
         editor.putString(TOKEN,loggedInUser.token);
 
