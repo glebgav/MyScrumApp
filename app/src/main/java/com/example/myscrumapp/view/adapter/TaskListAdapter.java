@@ -45,19 +45,6 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         holder.itemView.setTask(tasksList.get(position));
         holder.itemView.setListener(this);
-/*        TextView title = holder.itemView.findViewById(R.id.taskTitle);
-        TextView description = holder.itemView.findViewById(R.id.taskDescription);
-        TextView assignedUser = holder.itemView.findViewById(R.id.assignedUser);
-        LinearLayout layout = holder.itemView.findViewById(R.id.taskLayout);
-
-        title.setText(tasksList.get(position).getTitle());
-        description.setText(tasksList.get(position).getDescription());
-        assignedUser.setText(tasksList.get(position).getDescription());
-        layout.setOnClickListener(v -> {
-            ListFragmentDirections.ActionTaskDetail action = ListFragmentDirections.actionTaskDetail();
-            action.setTaskUuid(tasksList.get(position).getTaskId());
-            Navigation.findNavController(layout).navigate(action);
-        });*/
     }
 
     @Override
@@ -75,7 +62,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
 
     }
 
-    class TaskViewHolder extends RecyclerView.ViewHolder{
+    static class TaskViewHolder extends RecyclerView.ViewHolder{
 
         public ItemTaskBinding itemView;
 

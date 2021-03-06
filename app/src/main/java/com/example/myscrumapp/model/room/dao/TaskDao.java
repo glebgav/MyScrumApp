@@ -23,6 +23,12 @@ public interface TaskDao {
     @Query("select * from tasks where taskId= :taskId")
     Task getTaskByTaskId(String taskId);
 
+    @Query("select * from tasks where userId= :userId")
+    List<Task> getTaskByUserId(String userId);
+
+    @Query("select * from tasks where teamId= :teamId")
+    List<Task> getTaskByTeamId(String teamId);
+
     @Query("delete from tasks")
     void deleteAllTasks();
 }

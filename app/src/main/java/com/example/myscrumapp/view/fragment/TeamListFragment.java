@@ -87,7 +87,7 @@ public class TeamListFragment extends Fragment {
 
     private void observeViewModel() {
         viewModel.getTeamsLiveData().observe(getViewLifecycleOwner(), teams -> {
-            if(teams instanceof List){
+            if(teams != null){
                 viewModel.getIsLoading().postValue(false);
                 viewModel.getTeamLoadError().postValue(false);
                 teamsList.setVisibility(View.VISIBLE);
@@ -98,13 +98,13 @@ public class TeamListFragment extends Fragment {
             }
         });
         viewModel.getTeamLoadError().observe(getViewLifecycleOwner(), isError -> {
-            if(isError instanceof Boolean){
+            if(isError != null){
                 listError.setVisibility(isError?View.VISIBLE: View.GONE);
             }
         });
 
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            if(isLoading instanceof Boolean){
+            if(isLoading != null){
                 loadingView.setVisibility(isLoading?View.VISIBLE: View.GONE);
                 if(isLoading) {
                     listError.setVisibility(View.GONE);

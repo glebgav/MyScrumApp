@@ -27,8 +27,8 @@ import io.reactivex.schedulers.Schedulers;
 public class TeamRepository {
 
     private final TeamDao teamDao;
-    private MutableLiveData<List<Team>> allTeams  = new MutableLiveData<>();
-    private MutableLiveData<Team> team = new MutableLiveData<>();
+    private final MutableLiveData<List<Team>> allTeams  = new MutableLiveData<>();
+    private final MutableLiveData<Team> team = new MutableLiveData<>();
     private final ApiService apiService;
     private final TaskRunner taskRunner = new TaskRunner();
     private final SharedPreferencesHelper preferencesHelper;

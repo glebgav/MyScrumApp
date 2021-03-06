@@ -1,35 +1,48 @@
 package com.example.myscrumapp.viewmodel;
 
 import android.app.Application;
-import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 
 import com.example.myscrumapp.model.entity.Task;
-import com.example.myscrumapp.model.entity.Team;
 import com.example.myscrumapp.model.repository.TaskRepository;
-import com.example.myscrumapp.model.repository.TeamRepository;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import lombok.Getter;
 
 @Getter
 public class TaskListViewModel extends AndroidViewModel {
 
-    private MutableLiveData<List<Task>> tasks;
-    private MutableLiveData<Boolean> taskLoadError = new MutableLiveData<>();
-    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
-    private TaskRepository taskRepository;
+    private final LiveData<List<Task>> tasks;
+    private MutableLiveData<List<Task>> myTasks;
+    private final MutableLiveData<String> teamIdLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> taskLoadError = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
+    private final TaskRepository taskRepository;
 
     public TaskListViewModel(@NonNull Application application) {
         super(application);
         taskRepository = new TaskRepository(application);
-        tasks = taskRepository.getAllTasks();
 
-
+        tasks = Transformations.switchMap(teamIdLiveData, taskRepository::getTasksByTeamId);
+        myTasks = taskRepository.getMyTasks();
     }
+
+    public void setToMyTasks(){
+        myTasks = taskRepository.getMyTasks();
+    }
+
+    public void setTeamIdLiveData(String teamId){
+        teamIdLiveData.setValue(teamId);
+    }
+
+
     public  MutableLiveData<Boolean> getTaskLoadError(){
         return taskLoadError;
     }
@@ -38,19 +51,17 @@ public class TaskListViewModel extends AndroidViewModel {
         return isLoading;
     }
 
-    public MutableLiveData<List<Task>> getTasksLiveData() {
+    public LiveData<List<Task>> getTasksLiveData() {
         return tasks;
+    }
+
+    public MutableLiveData<List<Task>> getMyTasksLiveData() {
+        return myTasks;
     }
 
 
     public void refreshBypassCache(){
         taskRepository.refreshBypassCache();
-    }
-
-
-    @Override
-    protected void onCleared() {
-        super.onCleared();
     }
 
 }

@@ -1,14 +1,13 @@
 package com.example.myscrumapp.model.repository;
 
 import android.app.Application;
+
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.myscrumapp.model.entity.LoggedInUser;
 import com.example.myscrumapp.model.entity.Task;
-import com.example.myscrumapp.model.entity.Team;
 import com.example.myscrumapp.model.network.ApiService;
 import com.example.myscrumapp.model.room.dao.TaskDao;
-import com.example.myscrumapp.model.room.dao.TeamDao;
 import com.example.myscrumapp.model.room.db.MyDatabase;
 import com.example.myscrumapp.utils.GlobalConstants;
 import com.example.myscrumapp.utils.SharedPreferencesHelper;
@@ -16,6 +15,7 @@ import com.example.myscrumapp.utils.TaskRunner;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -24,8 +24,9 @@ import io.reactivex.schedulers.Schedulers;
 public class TaskRepository {
 
     private final TaskDao taskDao;
-    private MutableLiveData<List<Task>> allTasks  = new MutableLiveData<>();
-    private MutableLiveData<Task> task = new MutableLiveData<>();
+    private final MutableLiveData<List<Task>> allTasks  = new MutableLiveData<>();
+    private final MutableLiveData<List<Task>> myTasks  = new MutableLiveData<>();
+    private final MutableLiveData<Task> task = new MutableLiveData<>();
     private final ApiService apiService;
     private final TaskRunner taskRunner = new TaskRunner();
     private final SharedPreferencesHelper preferencesHelper;
@@ -40,15 +41,22 @@ public class TaskRepository {
     }
 
 
-    public MutableLiveData<List<Task>> getAllTasks(){
+    public MutableLiveData<List<Task>> getMyTasks(){
         Long updateTime = preferencesHelper.getUpdateTime();
         Long currentTime = System.nanoTime();
         if(updateTime != 0 && currentTime -updateTime < GlobalConstants.REFRESH_TIME) {
-            return fetchFromDatabase();
+            return fetchMyTasksFromDatabase();
         }else{
             return fetchFromRemote();
         }
     }
+
+
+    public MutableLiveData<List<Task>> getTasksByTeamId(String teamId){
+        taskRunner.executeAsync(new GetTaskByTeamIdTask(taskDao, teamId), this::tasksRetrieved);
+        return allTasks;
+    }
+
 
     public MutableLiveData<Task> getTask(String taskId){
         taskRunner.executeAsync(new GetTaskByIdTask(taskDao, taskId), this::taskRetrieved);
@@ -57,6 +65,10 @@ public class TaskRepository {
 
     public void tasksRetrieved(List<Task> tasksList){
         allTasks.setValue(tasksList);
+    }
+
+    public void myTasksRetrieved(List<Task> tasksList){
+        myTasks.setValue(tasksList);
     }
 
     public void taskRetrieved(Task task){
@@ -69,9 +81,16 @@ public class TaskRepository {
     }
 
 
-    private MutableLiveData<List<Task>> fetchFromDatabase(){
+    private MutableLiveData<List<Task>> fetchAllTasksFromDatabase(){
         taskRunner.executeAsync(new GetAllTasksFromLocalTask(taskDao), this::tasksRetrieved);
         return allTasks;
+    }
+
+    public MutableLiveData<List<Task>> fetchMyTasksFromDatabase(){
+
+        LoggedInUser user = preferencesHelper.getUser();
+        taskRunner.executeAsync(new GetTaskByUserIdTask(taskDao, user.userId), this::myTasksRetrieved);
+        return myTasks;
     }
 
 
@@ -87,6 +106,7 @@ public class TaskRepository {
                                     taskRunner.executeAsync(new InsertTasksFromRemoteToLocalTask(taskDao, tasksList), (data) ->{
                                         tasksRetrieved(data);
                                         preferencesHelper.saveUpdateTime(System.nanoTime());
+                                        fetchMyTasksFromDatabase();
                                     });
                                 }
 
@@ -97,7 +117,7 @@ public class TaskRepository {
                             })
 
             );
-        return allTasks;
+        return myTasks;
     }
 
 
@@ -156,6 +176,38 @@ public class TaskRepository {
         @Override
         public Task call() {
             return taskDao.getTaskByTaskId(taskId);
+        }
+    }
+
+    private static class GetTaskByUserIdTask implements Callable<List<Task>> {
+        private final String userId;
+        private final TaskDao taskDao;
+
+        public GetTaskByUserIdTask(TaskDao taskDao, String userId)
+        {
+            this.taskDao = taskDao;
+            this.userId = userId;
+        }
+
+        @Override
+        public List<Task> call() {
+            return taskDao.getTaskByUserId(userId);
+        }
+    }
+
+    private static class GetTaskByTeamIdTask implements Callable<List<Task>> {
+        private final String teamId;
+        private final TaskDao taskDao;
+
+        public GetTaskByTeamIdTask(TaskDao taskDao, String teamId)
+        {
+            this.taskDao = taskDao;
+            this.teamId = teamId;
+        }
+
+        @Override
+        public List<Task> call() {
+            return taskDao.getTaskByTeamId(teamId);
         }
     }
 

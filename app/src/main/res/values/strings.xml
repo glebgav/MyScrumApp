@@ -30,4 +30,5 @@
     <string name="prompt_last_name">Last Name</string>
     <string name="already_a_user_click_here">Already a User? click here</string>
     <string name="action_login">Login</string>
+    <string name="action_logout">LogOut</string>
 </resources>

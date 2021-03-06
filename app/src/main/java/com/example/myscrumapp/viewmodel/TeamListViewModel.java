@@ -18,10 +18,10 @@ import lombok.Getter;
 @Getter
 public class TeamListViewModel extends AndroidViewModel {
 
-    private MutableLiveData<List<Team>> teams;
-    private MutableLiveData<Boolean> teamLoadError = new MutableLiveData<>();
-    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
-    private TeamRepository teamRepository;
+    private final MutableLiveData<List<Team>> teams;
+    private final MutableLiveData<Boolean> teamLoadError = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
+    private final TeamRepository teamRepository;
 
     public TeamListViewModel(@NonNull Application application) {
         super(application);

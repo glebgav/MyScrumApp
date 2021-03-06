@@ -18,19 +18,20 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.myscrumapp.R;
+import com.example.myscrumapp.utils.GlobalConstants;
 import com.example.myscrumapp.view.adapter.TaskListAdapter;
 import com.example.myscrumapp.viewmodel.TaskListViewModel;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
 public class TaskListFragment extends Fragment {
+    private String teamId;
     private TaskListViewModel viewModel;
-    private TaskListAdapter taskListAdapter = new TaskListAdapter(new ArrayList<>());
+    private final TaskListAdapter taskListAdapter = new TaskListAdapter(new ArrayList<>());
 
     @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tasksList)
@@ -66,6 +67,16 @@ public class TaskListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         viewModel = ViewModelProviders.of(this).get(TaskListViewModel.class);
 
+        if(getArguments() != null){
+            teamId = TaskListFragmentArgs.fromBundle(getArguments()).getTeamId();
+        }
+        if(!teamId.equals(GlobalConstants.MY_TASKS_FRAGMENT_INDICATOR)){
+            viewModel.setTeamIdLiveData(teamId);
+        }else{
+            viewModel.setToMyTasks();
+        }
+
+
         tasksList.setLayoutManager(new LinearLayoutManager(getContext()));
         tasksList.setAdapter(taskListAdapter);
 
@@ -77,17 +88,35 @@ public class TaskListFragment extends Fragment {
             refreshLayout.setRefreshing(false);
         });
 
+
+
         observeViewModel();
 
     }
 
     private void observeViewModel(){
-        viewModel.getTasksLiveData().observe(getViewLifecycleOwner(), tasks -> {
-            if(tasks instanceof List){
+        viewModel.getMyTasksLiveData().observe(getViewLifecycleOwner(), tasks -> {
+            if(tasks != null){
                 viewModel.getIsLoading().postValue(false);
                 viewModel.getTaskLoadError().postValue(false);
                 tasksList.setVisibility(View.VISIBLE);
-                taskListAdapter.updateTasksList(tasks);
+                if(teamId.equals(GlobalConstants.MY_TASKS_FRAGMENT_INDICATOR))
+                    taskListAdapter.updateTasksList(tasks);
+            }else
+            {
+                viewModel.getTaskLoadError().postValue(true);
+            }
+        });
+        viewModel.getTasksLiveData().observe(getViewLifecycleOwner(), tasks -> {
+            if(tasks != null){
+                viewModel.getIsLoading().postValue(false);
+                viewModel.getTaskLoadError().postValue(false);
+                tasksList.setVisibility(View.VISIBLE);
+                if(!teamId.equals(GlobalConstants.MY_TASKS_FRAGMENT_INDICATOR)) {
+                    viewModel.setTeamIdLiveData(teamId);
+                    taskListAdapter.updateTasksList(tasks);
+                }
+
             }else
             {
                 viewModel.getTaskLoadError().postValue(true);
@@ -95,13 +124,13 @@ public class TaskListFragment extends Fragment {
         });
 
         viewModel.getTaskLoadError().observe(getViewLifecycleOwner(), isError -> {
-            if(isError instanceof Boolean){
+            if(isError != null){
                 listError.setVisibility(isError?View.VISIBLE: View.GONE);
             }
         });
 
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            if(isLoading instanceof Boolean){
+            if(isLoading != null){
                 loadingView.setVisibility(isLoading?View.VISIBLE: View.GONE);
                 if(isLoading) {
                     listError.setVisibility(View.GONE);

@@ -16,12 +16,12 @@
             app:destination="@id/taskDetailFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim" />
-        <action
-            android:id="@+id/action_taskListFragment_to_welcomeFragment"
-            app:destination="@id/homeFragment" />
-        <action
-            android:id="@+id/action_taskListFragment_to_teamListFragment"
-            app:destination="@id/teamListFragment" />
+        <argument
+            android:name="TeamId"
+            app:argType="string"
+            android:defaultValue="MyTasks" />
+
+
     </fragment>
     <fragment
         android:id="@+id/taskDetailFragment"
@@ -45,9 +45,6 @@
         <action
             android:id="@+id/action_teamListFragment_to_taskListFragment"
             app:destination="@id/taskListFragment" />
-        <action
-            android:id="@+id/action_teamListFragment_to_welcomeFragment"
-            app:destination="@id/homeFragment" />
     </fragment>
 
     <fragment
@@ -55,11 +52,5 @@
         android:name="com.example.myscrumapp.view.fragment.HomeFragment"
         android:label="fragment_welcome"
         tools:layout="@layout/fragment_home">
-        <action
-            android:id="@+id/action_homeFragment_to_taskListFragment"
-            app:destination="@id/taskListFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_teamListFragment"
-            app:destination="@id/teamListFragment" />
     </fragment>
 </navigation>

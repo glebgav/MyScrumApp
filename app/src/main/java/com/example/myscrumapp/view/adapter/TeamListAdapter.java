@@ -53,7 +53,11 @@ public class TeamListAdapter extends RecyclerView.Adapter<TeamListAdapter.TeamVi
 
     @Override
     public void onTeamDetailsClicked(View v) {
-        Navigation.findNavController(v).navigate(TeamListFragmentDirections.actionTeamListFragmentToTaskListFragment());
+        String UuidString = ((TextView)v.findViewById(R.id.teamId)).getText().toString();
+
+        TeamListFragmentDirections.ActionTeamListFragmentToTaskListFragment action = TeamListFragmentDirections.actionTeamListFragmentToTaskListFragment();
+        action.setTeamId(UuidString);
+        Navigation.findNavController(v).navigate(action);
     }
 
     static class TeamViewHolder extends RecyclerView.ViewHolder{
