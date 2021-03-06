@@ -37,8 +37,14 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
+        SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper.getInstance(getApplicationContext());
         FloatingActionButton fab = findViewById(R.id.fab);
+        if (sharedPreferencesHelper.isLoggedIn()){
+            if(!sharedPreferencesHelper.getUser().isManager){
+                fab.setVisibility(View.GONE);
+            }
+        }
+
         fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show());
 

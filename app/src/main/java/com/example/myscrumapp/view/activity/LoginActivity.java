@@ -18,6 +18,8 @@ import com.example.myscrumapp.model.network.ApiService;
 import com.example.myscrumapp.utils.SharedPreferencesHelper;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.Objects;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -87,8 +89,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     String userId = response.headers().get("UserId");
                     String firstName = response.headers().get("UserName");
                     String token = response.headers().get("Authorization");
+                    Boolean isManager = Boolean.parseBoolean(response.headers().get("isManager"));
 
-                    SharedPreferencesHelper.getInstance(getApplicationContext()).saveUser(new LoggedInUser(firstName,userId, email,token));
+                    SharedPreferencesHelper.getInstance(getApplicationContext()).saveUser(new LoggedInUser(firstName,userId, email,token,isManager));
 
                     Intent intent = new Intent(LoginActivity.this,MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

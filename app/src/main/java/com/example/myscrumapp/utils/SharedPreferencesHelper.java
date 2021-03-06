@@ -14,12 +14,13 @@ public class SharedPreferencesHelper {
     private static final String USER_FIRST_NAME = "firstName";
     private static final String USER_EMAIL = "email";
     private static final String TOKEN = "token";
+    private static final String IS_MANAGER = "isManager";
     private static final String DEFAULT_NONE = "NONE";
 
 
 
     private static SharedPreferencesHelper instance;
-    private SharedPreferences preferences;
+    private final SharedPreferences preferences;
 
     private SharedPreferencesHelper(Context context){
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -46,6 +47,7 @@ public class SharedPreferencesHelper {
         editor.putString(USER_ID,loggedInUser.userId);
         editor.putString(USER_EMAIL,loggedInUser.email);
         editor.putString(TOKEN,loggedInUser.token);
+        editor.putBoolean(IS_MANAGER,loggedInUser.isManager);
 
         editor.apply();
 
@@ -59,7 +61,8 @@ public class SharedPreferencesHelper {
         return new LoggedInUser(preferences.getString(USER_FIRST_NAME, DEFAULT_NONE),
                 preferences.getString(USER_ID, DEFAULT_NONE),
                 preferences.getString(USER_EMAIL, DEFAULT_NONE),
-                preferences.getString(TOKEN, DEFAULT_NONE));
+                preferences.getString(TOKEN, DEFAULT_NONE),
+                preferences.getBoolean(IS_MANAGER, false));
     }
 
     public void clear(){
