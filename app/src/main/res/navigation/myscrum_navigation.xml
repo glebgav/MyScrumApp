@@ -20,6 +20,9 @@
             android:name="TeamId"
             app:argType="string"
             android:defaultValue="MyTasks" />
+        <action
+            android:id="@+id/action_taskListFragment_to_teamListFragment"
+            app:destination="@id/teamListFragment" />
 
 
     </fragment>

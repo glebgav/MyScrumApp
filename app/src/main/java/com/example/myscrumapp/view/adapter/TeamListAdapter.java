@@ -19,7 +19,7 @@ import java.util.List;
 
 public class TeamListAdapter extends RecyclerView.Adapter<TeamListAdapter.TeamViewHolder> implements TaskListListener {
 
-    private ArrayList<Team> teamsList;
+    private final ArrayList<Team> teamsList;
 
     public TeamListAdapter(ArrayList<Team> teamsList){
         this.teamsList = teamsList;

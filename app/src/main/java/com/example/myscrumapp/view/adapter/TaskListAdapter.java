@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myscrumapp.R;
 import com.example.myscrumapp.databinding.ItemTaskBinding;
 import com.example.myscrumapp.model.entity.Task;
+import com.example.myscrumapp.view.fragment.TaskListFragment;
 import com.example.myscrumapp.view.fragment.TaskListFragmentDirections;
 import com.example.myscrumapp.view.listener.TaskDetailsListener;
 
@@ -21,7 +22,7 @@ import java.util.List;
 
 public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskViewHolder> implements TaskDetailsListener {
 
-    private ArrayList<Task> tasksList;
+    private final ArrayList<Task> tasksList;
 
     public TaskListAdapter(ArrayList<Task> tasksList){
         this.tasksList = tasksList;
@@ -51,6 +52,8 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
     public int getItemCount() {
         return tasksList.size();
     }
+
+
 
     @Override
     public void onTaskDetailsClicked(View v) {
