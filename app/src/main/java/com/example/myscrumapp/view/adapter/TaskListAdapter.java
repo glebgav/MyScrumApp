@@ -16,6 +16,7 @@ import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.view.fragment.TaskListFragment;
 import com.example.myscrumapp.view.fragment.TaskListFragmentDirections;
 import com.example.myscrumapp.view.listener.TaskDetailsListener;
+import com.google.android.gms.common.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,20 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
         tasksList.clear();
         tasksList.addAll(newTaskList);
         notifyDataSetChanged();
+    }
+
+    public void filterListByStatus(int status){
+
+        ArrayList<Task> result = new ArrayList<>();
+
+        for (Task task: tasksList) {
+
+            if (task.getStatus() == status) {
+
+                result.add(task);
+            }
+        }
+        updateTasksList(result);
     }
 
     @NonNull

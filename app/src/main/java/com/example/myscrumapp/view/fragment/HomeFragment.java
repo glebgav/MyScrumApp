@@ -1,22 +1,32 @@
 package com.example.myscrumapp.view.fragment;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import androidx.appcompat.widget.Toolbar;
 
 import com.example.myscrumapp.R;
 import com.example.myscrumapp.model.entity.LoggedInUser;
 import com.example.myscrumapp.utils.SharedPreferencesHelper;
+import com.example.myscrumapp.view.activity.MainActivity;
+import com.google.android.material.appbar.AppBarLayout;
+
+import java.util.Objects;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 public class HomeFragment extends Fragment {
@@ -35,7 +45,9 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        ButterKnife.bind(this,view);
+        return view;
     }
 
     @Override
@@ -43,13 +55,12 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         LoggedInUser user = SharedPreferencesHelper.getInstance(getContext()).getUser();
-
         setText("Welcome "+user.firstName+" !");
 
     }
 
     public void setText(String text){
-        TextView textView = getView().findViewById(R.id.welcomeBanner);
+        TextView textView = requireView().findViewById(R.id.welcomeBanner);
         textView.setText(text);
     }
 }

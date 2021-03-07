@@ -2,6 +2,7 @@ package com.example.myscrumapp.view.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.databinding.DataBindingUtil;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -16,16 +17,22 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myscrumapp.R;
+import com.example.myscrumapp.databinding.FragmentTaskDetailBinding;
+
 import com.example.myscrumapp.utils.SharedPreferencesHelper;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
-public class MainActivity extends AppCompatActivity {
+import butterknife.BindView;
 
+public class MainActivity extends AppCompatActivity {
     private NavController navController;
     private AppBarConfiguration mAppBarConfiguration;
 
@@ -36,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper.getInstance(getApplicationContext());
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -48,8 +56,15 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show());
 
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+
+        View headerView = navigationView.getHeaderView(0);
+        TextView navUsername = headerView.findViewById(R.id.header_userName);
+        TextView navUserEmail = headerView.findViewById(R.id.header_userEmail);
+        navUsername.setText(sharedPreferencesHelper.getUser().firstName);
+        navUserEmail.setText(sharedPreferencesHelper.getUser().email);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
 

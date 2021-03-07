@@ -51,7 +51,7 @@ public class TaskDetailsFragment extends Fragment {
 
     private void observeViewModel() {
         viewModel.getTaskMutableLiveData().observe(getViewLifecycleOwner(), task -> {
-            if(task instanceof Task){
+            if(task != null){
                 binding.setTask(task);
             }
         });

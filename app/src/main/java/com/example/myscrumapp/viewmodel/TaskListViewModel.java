@@ -11,6 +11,7 @@ import androidx.lifecycle.Transformations;
 import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.model.repository.TaskRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -40,6 +41,14 @@ public class TaskListViewModel extends AndroidViewModel {
 
     public void setTeamIdLiveData(String teamId){
         teamIdLiveData.setValue(teamId);
+    }
+
+    public void filterTeamTasksByStatus(String teamId, int status){
+        taskRepository.getTasksByTeamIdAndStatus(teamId, status);
+    }
+
+    public void filterMyTasksByStatus(int status){
+        taskRepository.getMyTasksByStatus(status);
     }
 
 

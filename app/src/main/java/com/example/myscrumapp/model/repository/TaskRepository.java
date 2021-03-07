@@ -57,6 +57,17 @@ public class TaskRepository {
         return allTasks;
     }
 
+    public MutableLiveData<List<Task>> getTasksByTeamIdAndStatus(String teamId, int status){
+        taskRunner.executeAsync(new GetTaskByTeamIdAndStatusTask(taskDao, teamId, status), this::tasksRetrieved);
+        return allTasks;
+    }
+
+    public MutableLiveData<List<Task>> getMyTasksByStatus(int status){
+        LoggedInUser user = preferencesHelper.getUser();
+        taskRunner.executeAsync(new GetTaskByUserIdAndStatusTask(taskDao, user.userId, status), this::myTasksRetrieved);
+        return myTasks;
+    }
+
 
     public MutableLiveData<Task> getTask(String taskId){
         taskRunner.executeAsync(new GetTaskByIdTask(taskDao, taskId), this::taskRetrieved);
@@ -104,7 +115,7 @@ public class TaskRepository {
                                 @Override
                                 public void onSuccess(@io.reactivex.annotations.NonNull List<Task> tasksList) {
                                     taskRunner.executeAsync(new InsertTasksFromRemoteToLocalTask(taskDao, tasksList), (data) ->{
-                                        tasksRetrieved(data);
+                                       // tasksRetrieved(data);
                                         preferencesHelper.saveUpdateTime(System.nanoTime());
                                         fetchMyTasksFromDatabase();
                                     });
@@ -195,6 +206,24 @@ public class TaskRepository {
         }
     }
 
+    private static class GetTaskByUserIdAndStatusTask implements Callable<List<Task>> {
+        private final String userId;
+        private final TaskDao taskDao;
+        private final int status;
+
+        public GetTaskByUserIdAndStatusTask(TaskDao taskDao, String userId, int status)
+        {
+            this.taskDao = taskDao;
+            this.userId = userId;
+            this.status = status;
+        }
+
+        @Override
+        public List<Task> call() {
+            return taskDao.getTaskByUserIdAndByStatus(userId, status);
+        }
+    }
+
     private static class GetTaskByTeamIdTask implements Callable<List<Task>> {
         private final String teamId;
         private final TaskDao taskDao;
@@ -203,11 +232,30 @@ public class TaskRepository {
         {
             this.taskDao = taskDao;
             this.teamId = teamId;
+
         }
 
         @Override
         public List<Task> call() {
             return taskDao.getTaskByTeamId(teamId);
+        }
+    }
+
+    private static class GetTaskByTeamIdAndStatusTask implements Callable<List<Task>> {
+        private final String teamId;
+        private final TaskDao taskDao;
+        private final int status;
+
+        public GetTaskByTeamIdAndStatusTask(TaskDao taskDao, String teamId, int status)
+        {
+            this.taskDao = taskDao;
+            this.teamId = teamId;
+            this.status = status;
+        }
+
+        @Override
+        public List<Task> call() {
+            return taskDao.getTaskByTeamIdAndByStatus(teamId,status);
         }
     }
 
