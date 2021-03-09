@@ -1,9 +1,7 @@
 package com.example.myscrumapp.model.network;
 
 import com.example.myscrumapp.model.entity.Task;
-
 import java.util.List;
-
 import io.reactivex.Single;
 import retrofit2.http.Body;
 import retrofit2.http.GET;

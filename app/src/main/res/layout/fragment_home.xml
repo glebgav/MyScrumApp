@@ -3,13 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.fragment.HomeFragment">
+    tools:context=".view.fragment.HomeFragment"
+    android:background="@color/teal_200"
+    >
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:id="@+id/welcomeBanner"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center"
+        android:textSize="35sp"
+        android:textStyle="bold"
         android:text="dsad"
 
         />

@@ -9,10 +9,8 @@ import androidx.lifecycle.ViewModelProviders;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.example.myscrumapp.R;
 import com.example.myscrumapp.databinding.FragmentTaskDetailBinding;
-import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.viewmodel.TaskDetailsViewModel;
 
 public class TaskDetailsFragment extends Fragment {

@@ -6,7 +6,6 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.model.repository.TaskRepository;
-
 import lombok.Getter;
 
 

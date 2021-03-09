@@ -2,7 +2,6 @@ package com.example.myscrumapp.view.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,16 +9,11 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.example.myscrumapp.R;
 import com.example.myscrumapp.model.entity.LoggedInUser;
 import com.example.myscrumapp.model.entity.UserLoginDetails;
 import com.example.myscrumapp.model.network.ApiService;
 import com.example.myscrumapp.utils.SharedPreferencesHelper;
-import com.google.android.material.snackbar.Snackbar;
-
-import java.util.Objects;
-
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;

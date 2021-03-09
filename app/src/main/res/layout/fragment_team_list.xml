@@ -5,7 +5,8 @@
     android:id="@+id/teamRefreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.fragment.TeamListFragment">
+    tools:context=".view.fragment.TeamListFragment"
+    android:background="@color/teal_200">
 
 
 

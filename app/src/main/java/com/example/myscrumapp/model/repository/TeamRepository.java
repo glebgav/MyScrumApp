@@ -1,24 +1,18 @@
 package com.example.myscrumapp.model.repository;
 
 import android.app.Application;
-
 import androidx.lifecycle.MutableLiveData;
-
 import com.example.myscrumapp.model.entity.LoggedInUser;
-import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.model.entity.Team;
 import com.example.myscrumapp.model.network.ApiService;
-import com.example.myscrumapp.model.room.dao.TaskDao;
 import com.example.myscrumapp.model.room.dao.TeamDao;
 import com.example.myscrumapp.model.room.db.MyDatabase;
 import com.example.myscrumapp.utils.GlobalConstants;
 import com.example.myscrumapp.utils.SharedPreferencesHelper;
 import com.example.myscrumapp.utils.TaskRunner;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -112,7 +106,7 @@ public class TeamRepository {
         }
 
         @Override
-        public List<Team> call() throws Exception {
+        public List<Team> call() {
             List<Team> list = lists[0];
             teamDao.deleteAllTeams();
 
@@ -136,7 +130,7 @@ public class TeamRepository {
         }
 
         @Override
-        public List<Team> call() throws Exception {
+        public List<Team> call() {
             return teamDao.getAllTeams();
         }
     }
@@ -152,7 +146,7 @@ public class TeamRepository {
         }
 
         @Override
-        public Team call() throws Exception {
+        public Team call() {
             return teamDao.getTeamByTeamId(teamId);
         }
     }

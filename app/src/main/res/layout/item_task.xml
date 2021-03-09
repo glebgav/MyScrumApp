@@ -37,7 +37,7 @@
             android:id="@+id/taskDescription"
             style="@style/TaskDescription"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="107dp"
             android:padding="4dp"
             android:text="@{task.description}" />
 
@@ -45,8 +45,9 @@
         <TextView
             android:id="@+id/assignedUser"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="38dp"
             android:padding="4dp"
-            android:text="@{task.title}" />
+            android:gravity = "end"
+            android:text="@{`User: `+ task.userDetails.firstName}"/>
     </LinearLayout>
 </layout>

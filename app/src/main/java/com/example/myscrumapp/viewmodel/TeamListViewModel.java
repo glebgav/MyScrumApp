@@ -1,18 +1,12 @@
 package com.example.myscrumapp.viewmodel;
 
 import android.app.Application;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
-
-import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.model.entity.Team;
-import com.example.myscrumapp.model.repository.TaskRepository;
 import com.example.myscrumapp.model.repository.TeamRepository;
-
 import java.util.List;
-
 import lombok.Getter;
 
 @Getter

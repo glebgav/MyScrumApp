@@ -4,20 +4,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.myscrumapp.R;
 import com.example.myscrumapp.databinding.ItemTaskBinding;
 import com.example.myscrumapp.model.entity.Task;
-import com.example.myscrumapp.view.fragment.TaskListFragment;
 import com.example.myscrumapp.view.fragment.TaskListFragmentDirections;
 import com.example.myscrumapp.view.listener.TaskDetailsListener;
-import com.google.android.gms.common.util.CollectionUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 

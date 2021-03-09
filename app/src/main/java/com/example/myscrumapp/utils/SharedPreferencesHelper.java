@@ -2,9 +2,7 @@ package com.example.myscrumapp.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
 import androidx.preference.PreferenceManager;
-
 import com.example.myscrumapp.model.entity.LoggedInUser;
 
 public class SharedPreferencesHelper {

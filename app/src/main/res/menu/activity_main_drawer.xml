@@ -18,5 +18,4 @@
             android:icon="@drawable/ic_details"
             android:title="@string/my_tasks" />
     </group>
-
 </menu>

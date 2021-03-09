@@ -1,11 +1,5 @@
 package com.example.myscrumapp.model.network;
 
-import com.example.myscrumapp.model.entity.Task;
-import com.example.myscrumapp.model.entity.Team;
-
-import java.util.List;
-
-import io.reactivex.Single;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;

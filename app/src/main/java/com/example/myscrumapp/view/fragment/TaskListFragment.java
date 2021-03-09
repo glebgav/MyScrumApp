@@ -2,34 +2,27 @@ package com.example.myscrumapp.view.fragment;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.example.myscrumapp.R;
-import com.example.myscrumapp.databinding.ItemTeamBinding;
 import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.utils.GlobalConstants;
 import com.example.myscrumapp.view.adapter.TaskListAdapter;
 import com.example.myscrumapp.viewmodel.TaskListViewModel;
 import com.google.android.material.appbar.AppBarLayout;
-
 import java.util.ArrayList;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -37,7 +30,7 @@ import butterknife.ButterKnife;
 public class TaskListFragment extends Fragment {
     private String teamId;
     private TaskListViewModel viewModel;
-    private TaskListAdapter taskListAdapter = new TaskListAdapter(new ArrayList<>());
+    private final TaskListAdapter taskListAdapter = new TaskListAdapter(new ArrayList<>());
     private AppBarLayout appBarLayout;
     private Button toDoBtn;
     private Button inProgressBtn;
@@ -82,7 +75,6 @@ public class TaskListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // enableButtons();
 
         viewModel = ViewModelProviders.of(this).get(TaskListViewModel.class);
 
@@ -104,9 +96,6 @@ public class TaskListFragment extends Fragment {
             listError.setVisibility(View.GONE);
             loadingView.setVisibility(View.VISIBLE);
             viewModel.refreshBypassCache();
-         /*   if(!teamId.equals(GlobalConstants.MY_TASKS_FRAGMENT_INDICATOR)){
-                viewModel.setTeamIdLiveData(teamId);
-            }*/
             refreshLayout.setRefreshing(false);
         });
 

@@ -9,7 +9,7 @@
     <fragment
         android:id="@+id/taskListFragment"
         android:name="com.example.myscrumapp.view.fragment.TaskListFragment"
-        android:label="fragment_task_list"
+        android:label="Tasks"
         tools:layout="@layout/fragment_task_list">
         <action
             android:id="@+id/actionTaskDetail"
@@ -18,8 +18,8 @@
             app:exitAnim="@anim/nav_default_exit_anim" />
         <argument
             android:name="TeamId"
-            app:argType="string"
-            android:defaultValue="MyTasks" />
+            android:defaultValue="MyTasks"
+            app:argType="string" />
         <action
             android:id="@+id/action_taskListFragment_to_teamListFragment"
             app:destination="@id/teamListFragment" />
@@ -29,21 +29,21 @@
     <fragment
         android:id="@+id/taskDetailFragment"
         android:name="com.example.myscrumapp.view.fragment.TaskDetailsFragment"
-        android:label="fragment_task_detail"
+        android:label="Task"
         tools:layout="@layout/fragment_task_detail">
         <action
             android:id="@+id/actionList"
             app:destination="@id/taskListFragment" />
         <argument
             android:name="TaskUuid"
-            app:argType="string"
-            android:defaultValue='"1"' />
+            android:defaultValue='"1"'
+            app:argType="string" />
     </fragment>
 
     <fragment
         android:id="@+id/teamListFragment"
         android:name="com.example.myscrumapp.view.fragment.TeamListFragment"
-        android:label="fragment_team_list"
+        android:label="Teams"
         tools:layout="@layout/fragment_team_list">
         <action
             android:id="@+id/action_teamListFragment_to_taskListFragment"
@@ -53,7 +53,6 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.myscrumapp.view.fragment.HomeFragment"
-        android:label="fragment_welcome"
-        tools:layout="@layout/fragment_home">
-    </fragment>
+        android:label="Home"
+        tools:layout="@layout/fragment_home"></fragment>
 </navigation>

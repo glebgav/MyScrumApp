@@ -1,9 +1,7 @@
 package com.example.myscrumapp.model.repository;
 
 import android.app.Application;
-
 import androidx.lifecycle.MutableLiveData;
-
 import com.example.myscrumapp.model.entity.LoggedInUser;
 import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.model.network.ApiService;
@@ -15,7 +13,6 @@ import com.example.myscrumapp.utils.TaskRunner;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;

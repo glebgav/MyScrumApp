@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myscrumapp.R;
 import com.example.myscrumapp.databinding.ItemTeamBinding;
 import com.example.myscrumapp.model.entity.Team;
-import com.example.myscrumapp.view.fragment.TaskListFragmentDirections;
 import com.example.myscrumapp.view.fragment.TeamListFragmentDirections;
 import com.example.myscrumapp.view.listener.TaskListListener;
 import java.util.ArrayList;

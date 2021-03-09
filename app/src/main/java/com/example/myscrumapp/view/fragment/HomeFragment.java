@@ -1,31 +1,17 @@
 package com.example.myscrumapp.view.fragment;
 
-import android.annotation.SuppressLint;
-import android.os.Build;
-import android.os.Bundle;
 
+import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import androidx.appcompat.widget.Toolbar;
-
 import com.example.myscrumapp.R;
 import com.example.myscrumapp.model.entity.LoggedInUser;
 import com.example.myscrumapp.utils.SharedPreferencesHelper;
-import com.example.myscrumapp.view.activity.MainActivity;
-import com.google.android.material.appbar.AppBarLayout;
-
-import java.util.Objects;
-
-import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
