@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -72,6 +73,29 @@ public class TaskRepository {
     public MutableLiveData<Task> getTask(String taskId){
         taskRunner.executeAsync(new GetTaskByIdTask(taskDao, taskId), this::taskRetrieved);
         return task;
+    }
+
+    public void update(Task task){
+        taskRunner.executeAsync(new UpdateTaskInLocalTask(taskDao, task), result -> updateInRemote(task));
+    }
+
+
+    public void updateInRemote(Task task){
+        LoggedInUser user = preferencesHelper.getUser();
+        disposable.add(
+                apiService.getTasksApi().updateTask(user.token,task.getTaskId(),task)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<Task>() {
+                            @Override
+                            public void onSuccess(@NonNull Task task) {
+                            }
+                            @Override
+                            public void onError(@NonNull Throwable e) {
+                                e.printStackTrace();
+                            }
+                        })
+        );
     }
 
     public void tasksRetrieved(List<Task> tasksList){
@@ -256,6 +280,22 @@ public class TaskRepository {
         @Override
         public List<Task> call() {
             return taskDao.getTaskByTeamIdAndByStatus(teamId,status);
+        }
+    }
+
+    private static class UpdateTaskInLocalTask implements Callable<Void> {
+        private final TaskDao taskDao;
+        private final Task task;
+
+        public UpdateTaskInLocalTask(TaskDao taskDao, Task task)
+        {
+            this.taskDao = taskDao;
+            this.task = task;
+        }
+
+        @Override
+        public Void call() {
+            return taskDao.update(task);
         }
     }
 

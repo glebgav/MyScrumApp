@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -20,6 +21,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.myscrumapp.R;
+import com.example.myscrumapp.databinding.ItemTeamBinding;
+import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.utils.GlobalConstants;
 import com.example.myscrumapp.view.adapter.TaskListAdapter;
 import com.example.myscrumapp.viewmodel.TaskListViewModel;
@@ -106,6 +109,33 @@ public class TaskListFragment extends Fragment {
             }*/
             refreshLayout.setRefreshing(false);
         });
+
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT ) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                Task task = taskListAdapter.getTaskAt(viewHolder.getAdapterPosition());
+                if(direction == ItemTouchHelper.LEFT){
+                    if(task.getStatus() > 0 )
+                        task.setStatus(task.getStatus()-1);
+                    viewModel.update(task);
+                }
+                else if(direction == ItemTouchHelper.RIGHT) {
+                    if (task.getStatus() < 2)
+                        task.setStatus(task.getStatus() + 1);
+                    viewModel.update(task);
+                }
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(tasksList);
+
+
         configureListeners();
 
         observeViewModel();

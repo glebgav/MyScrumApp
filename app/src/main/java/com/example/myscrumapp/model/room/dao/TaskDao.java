@@ -4,6 +4,7 @@ package com.example.myscrumapp.model.room.dao;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.example.myscrumapp.model.entity.Task;
 
@@ -13,6 +14,12 @@ import java.util.List;
 public interface TaskDao {
     @Insert
     List<Long> insertAll(Task...tasks);
+
+    @Insert
+    void insert(Task task);
+
+    @Update
+    Void update(Task task);
 
     @Query("select * from tasks")
     List<Task> getAllTasks();

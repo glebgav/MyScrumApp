@@ -35,18 +35,8 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
         notifyDataSetChanged();
     }
 
-    public void filterListByStatus(int status){
-
-        ArrayList<Task> result = new ArrayList<>();
-
-        for (Task task: tasksList) {
-
-            if (task.getStatus() == status) {
-
-                result.add(task);
-            }
-        }
-        updateTasksList(result);
+    public Task getTaskAt(int position){
+        return tasksList.get(position);
     }
 
     @NonNull
