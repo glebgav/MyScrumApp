@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.TextView;
 import com.example.myscrumapp.R;
 import com.example.myscrumapp.utils.SharedPreferencesHelper;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -24,6 +25,10 @@ import com.google.android.material.snackbar.Snackbar;
 public class MainActivity extends AppCompatActivity {
     private NavController navController;
     private AppBarConfiguration mAppBarConfiguration;
+    private ExtendedFloatingActionButton addUser;
+    private ExtendedFloatingActionButton addTeam;
+    private ExtendedFloatingActionButton addTask;
+    private boolean isFABOpen =false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,15 +40,34 @@ public class MainActivity extends AppCompatActivity {
 
 
         SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper.getInstance(getApplicationContext());
-        FloatingActionButton fab = findViewById(R.id.fab);
+
+        FloatingActionButton fab = findViewById(R.id.fabOpenMenu);
         if (sharedPreferencesHelper.isLoggedIn()){
             if(!sharedPreferencesHelper.getUser().isManager){
                 fab.setVisibility(View.GONE);
             }
         }
+        addUser = findViewById(R.id.fabAddUser);
+        addTeam = findViewById(R.id.fabAddTeam);
+        addTask = findViewById(R.id.fabAddTask);
 
-        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
+        addUser.setVisibility(View.GONE);
+        addTeam.setVisibility(View.GONE);
+        addTask.setVisibility(View.GONE);
+
+
+        fab.setOnClickListener(view -> {
+            if(!isFABOpen){
+                showFABMenu();
+            }else{
+                closeFABMenu();
+            }
+        });
+
+
+
+/*        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show());*/
 
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -64,6 +88,11 @@ public class MainActivity extends AppCompatActivity {
         navController = Navigation.findNavController(this,R.id.fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        addUser.setOnClickListener(view -> {
+            navController.navigate(R.id.addUserFragment);
+            closeFABMenu();
+        });
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -105,5 +134,26 @@ public class MainActivity extends AppCompatActivity {
 
             startActivity(intent);
         }
+    }
+
+    private void showFABMenu(){
+        isFABOpen=true;
+        addUser.setVisibility(View.VISIBLE);
+        addTeam.setVisibility(View.VISIBLE);
+        addTask.setVisibility(View.VISIBLE);
+        addUser.animate().translationY(-getResources().getDimension(R.dimen.standard_65));
+        addTeam.animate().translationY(-getResources().getDimension(R.dimen.standard_125));
+        addTask.animate().translationY(-getResources().getDimension(R.dimen.standard_185));
+    }
+
+    private void closeFABMenu(){
+        isFABOpen=false;
+        addUser.animate().translationY(0);
+        addTeam.animate().translationY(0);
+        addTask.animate().translationY(0);
+
+        addUser.setVisibility(View.GONE);
+        addTeam.setVisibility(View.GONE);
+        addTask.setVisibility(View.GONE);
     }
 }

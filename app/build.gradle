@@ -81,6 +81,8 @@ dependencies {
 
     implementation "com.android.support:multidex:1.0.3"
 
+    implementation "com.google.android.material:material:1.4.0-alpha01"
+
     compileOnly 'org.projectlombok:lombok:1.18.16'
     annotationProcessor 'org.projectlombok:lombok:1.18.16'
 
