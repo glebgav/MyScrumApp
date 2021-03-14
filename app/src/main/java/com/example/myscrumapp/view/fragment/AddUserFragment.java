@@ -1,20 +1,30 @@
 package com.example.myscrumapp.view.fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.ViewModelProviders;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+
 import com.example.myscrumapp.R;
 import com.example.myscrumapp.databinding.FragmentAddUserBinding;
+import com.example.myscrumapp.model.entity.Item;
+import com.example.myscrumapp.model.entity.Task;
+import com.example.myscrumapp.model.entity.Team;
 import com.example.myscrumapp.model.entity.UserRegisterDetails;
+import com.example.myscrumapp.view.shared.MultiSelectionSpinner;
 import com.example.myscrumapp.viewmodel.AddUserViewModel;
 import com.google.android.material.snackbar.Snackbar;
+
+import java.util.ArrayList;
 import java.util.Objects;
 
 
@@ -45,7 +55,6 @@ public class AddUserFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewModel = ViewModelProviders.of(this).get(AddUserViewModel.class);
-
         configureListeners();
 
         observeViewModel(view);
@@ -64,6 +73,27 @@ public class AddUserFragment extends Fragment {
     }
 
     private void observeViewModel(View view){
+        viewModel.getTeamsLiveData().observe(getViewLifecycleOwner(), teams -> {
+            ArrayList<Item> items = new ArrayList<>();
+            if(teams != null){
+                for(Team team: teams){
+                    items.add(Item.builder().name(team.getName()).value(false).obj(team).build());
+                }
+            }
+            binding.teamListSpinner.setItems(items);
+        });
+
+        viewModel.getTasksLiveData().observe(getViewLifecycleOwner(), tasks -> {
+            ArrayList<Item> items = new ArrayList<>();
+            if(tasks != null){
+                for(Task task: tasks){
+                    items.add(Item.builder().name(task.getTitle()).value(false).obj(task).build());
+                }
+            }
+            binding.taskListSpinner.setItems(items);
+
+
+        });
         viewModel.getIsUserCreated().observe(getViewLifecycleOwner(), created -> {
             if(created != null){
                 binding.userAddedLoadingView.setVisibility(View.GONE);
@@ -73,6 +103,7 @@ public class AddUserFragment extends Fragment {
                 binding.editTextEmail.setVisibility(View.VISIBLE);
                 binding.isManager.setVisibility(View.VISIBLE);
                 binding.saveUser.setVisibility(View.VISIBLE);
+                binding.teamListSpinner.setVisibility(View.VISIBLE);
                 if(created){
                     Snackbar.make(view, "User Created Successfully", Snackbar.LENGTH_LONG).show();
                 }
@@ -93,6 +124,7 @@ public class AddUserFragment extends Fragment {
                     binding.editTextEmail.setVisibility(View.GONE);
                     binding.isManager.setVisibility(View.GONE);
                     binding.saveUser.setVisibility(View.GONE);
+                    binding.teamListSpinner.setVisibility(View.GONE);
                 }
             }
         });
@@ -141,7 +173,15 @@ public class AddUserFragment extends Fragment {
 
 
         if(validInput){
-            return new UserRegisterDetails(firstName, lastName,password,email, isManager);
+            ArrayList<Team> teams = new ArrayList<>();
+            for(Item item:  binding.teamListSpinner.getSelectedItems())
+                teams.add((Team) item.getObj());
+
+            ArrayList<Task> tasks = new ArrayList<>();
+            for(Item item:  binding.taskListSpinner.getSelectedItems())
+                tasks.add((Task) item.getObj());
+
+            return new UserRegisterDetails(firstName, lastName,password,email, isManager, teams,tasks);
         }else{
             return null;
         }

@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.myscrumapp.R;
 import com.example.myscrumapp.model.entity.UserRegisterDetails;
 import com.example.myscrumapp.model.network.ApiService;
+import com.google.android.material.snackbar.Snackbar;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
@@ -41,7 +43,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.buttonSignUp:
-                userSignUp();
+                userSignUp(v);
                 break;
             case R.id.textViewLogin:
                 startActivity(new Intent(this, LoginActivity.class));
@@ -50,7 +52,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
-    private void userSignUp() {
+    private void userSignUp(View v) {
         String email = editTextEmail.getText().toString().trim();
         String firstName = editTextFirstName.getText().toString().trim();
         String lastName = editTextLastName.getText().toString().trim();
@@ -87,7 +89,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             return;
         }
         /*Do user registration*/
-        UserRegisterDetails userRegisterDetails = new UserRegisterDetails(firstName, lastName,password,email, true);
+        UserRegisterDetails userRegisterDetails = new UserRegisterDetails(firstName, lastName,password,email, true,null,null);
         loadingProgressBar.setVisibility(View.VISIBLE);
         Call<UserRegisterDetails> call = ApiService.getInstance()
                 .getUsersApi()
@@ -99,10 +101,9 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             public void onResponse(@NonNull Call<UserRegisterDetails> call, @NonNull Response<UserRegisterDetails> response) {
 
                 if(response.code() == 200){
-                    UserRegisterDetails returnUserRegisterDetails = response.body();
-                    Toast.makeText(SignUpActivity.this,"User created successfully ",Toast.LENGTH_SHORT).show();
+                    Snackbar.make(v, "User Created Successfully", Snackbar.LENGTH_LONG).show();
                 }else{
-                    Toast.makeText(SignUpActivity.this,"Error  while creating the user ",Toast.LENGTH_SHORT).show();
+                    Snackbar.make(v, "Error  while creating the user ", Snackbar.LENGTH_LONG).show();
                 }
                 loadingProgressBar.setVisibility(View.GONE);
 

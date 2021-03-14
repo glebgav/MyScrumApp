@@ -52,6 +52,52 @@
                 android:inputType="textPassword"
                 android:text="@={user.password}" />
 
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/select_teams"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textStyle="normal"
+                    android:textSize="20sp"
+                    android:padding="5dp" />
+
+                <com.example.myscrumapp.view.shared.MultiSelectionSpinner
+                    android:id="@+id/teamListSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/select_tasks"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textStyle="normal"
+                    android:textSize="20sp"
+                    android:padding="5dp" />
+
+                <com.example.myscrumapp.view.shared.MultiSelectionSpinner
+                    android:id="@+id/taskListSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/is_manager"
                 android:layout_width="match_parent"

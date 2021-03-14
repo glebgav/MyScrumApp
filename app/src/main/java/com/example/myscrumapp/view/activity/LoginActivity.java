@@ -14,6 +14,8 @@ import com.example.myscrumapp.model.entity.LoggedInUser;
 import com.example.myscrumapp.model.entity.UserLoginDetails;
 import com.example.myscrumapp.model.network.ApiService;
 import com.example.myscrumapp.utils.SharedPreferencesHelper;
+import com.google.android.material.snackbar.Snackbar;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -41,7 +43,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.buttonLogin:
-                userLogin();
+                userLogin(v);
                 break;
             case R.id.textViewRegister:
                 startActivity(new Intent(this, SignUpActivity.class));
@@ -49,7 +51,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private void userLogin() {
+    private void userLogin(View v) {
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
 
@@ -91,14 +93,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                 }else{
-                    Toast.makeText(LoginActivity.this,"Error in login process ",Toast.LENGTH_SHORT).show();
+                    Snackbar.make(v, "Error  while creating the user ", Snackbar.LENGTH_LONG).show();
                 }
 
             }
 
             @Override
             public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                Toast.makeText(LoginActivity.this,t.getMessage(),Toast.LENGTH_SHORT).show();
+                Snackbar.make(v, t.getMessage(), Snackbar.LENGTH_LONG).show();
             }
         });
 

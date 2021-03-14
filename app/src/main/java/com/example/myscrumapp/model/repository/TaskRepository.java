@@ -10,6 +10,8 @@ import com.example.myscrumapp.model.room.db.MyDatabase;
 import com.example.myscrumapp.utils.GlobalConstants;
 import com.example.myscrumapp.utils.SharedPreferencesHelper;
 import com.example.myscrumapp.utils.TaskRunner;
+
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -23,6 +25,7 @@ public class TaskRepository {
 
     private final TaskDao taskDao;
     private final MutableLiveData<List<Task>> allTasks  = new MutableLiveData<>();
+    private final MutableLiveData<List<Task>> teamTasks  = new MutableLiveData<>();
     private final MutableLiveData<List<Task>> myTasks  = new MutableLiveData<>();
     private final MutableLiveData<Task> task = new MutableLiveData<>();
     private final ApiService apiService;
@@ -49,15 +52,24 @@ public class TaskRepository {
         }
     }
 
+    public MutableLiveData<List<Task>> getAllTasksFromRemote(){
+        return fetchFromRemote();
+    }
 
-    public MutableLiveData<List<Task>> getTasksByTeamId(String teamId){
-        taskRunner.executeAsync(new GetTaskByTeamIdTask(taskDao, teamId), this::tasksRetrieved);
+    private MutableLiveData<List<Task>> getAllTasksFromLocal(){
+        taskRunner.executeAsync(new GetAllTasksFromLocalTask(taskDao), this::tasksRetrieved);
         return allTasks;
     }
 
+
+    public MutableLiveData<List<Task>> getTasksByTeamId(String teamId){
+        taskRunner.executeAsync(new GetTaskByTeamIdTask(taskDao, teamId), this::teamTasksRetrieved);
+        return teamTasks;
+    }
+
     public MutableLiveData<List<Task>> getTasksByTeamIdAndStatus(String teamId, int status){
-        taskRunner.executeAsync(new GetTaskByTeamIdAndStatusTask(taskDao, teamId, status), this::tasksRetrieved);
-        return allTasks;
+        taskRunner.executeAsync(new GetTaskByTeamIdAndStatusTask(taskDao, teamId, status), this::teamTasksRetrieved);
+        return teamTasks;
     }
 
     public MutableLiveData<List<Task>> getMyTasksByStatus(int status){
@@ -99,6 +111,10 @@ public class TaskRepository {
         allTasks.setValue(tasksList);
     }
 
+    public void teamTasksRetrieved(List<Task> tasksList){
+        teamTasks.setValue(tasksList);
+    }
+
     public void myTasksRetrieved(List<Task> tasksList){
         myTasks.setValue(tasksList);
     }
@@ -110,12 +126,6 @@ public class TaskRepository {
 
     public void refreshBypassCache(){
         fetchFromRemote();
-    }
-
-
-    private MutableLiveData<List<Task>> fetchAllTasksFromDatabase(){
-        taskRunner.executeAsync(new GetAllTasksFromLocalTask(taskDao), this::tasksRetrieved);
-        return allTasks;
     }
 
     public MutableLiveData<List<Task>> fetchMyTasksFromDatabase(){
@@ -136,8 +146,8 @@ public class TaskRepository {
                                 @Override
                                 public void onSuccess(@io.reactivex.annotations.NonNull List<Task> tasksList) {
                                     taskRunner.executeAsync(new InsertTasksFromRemoteToLocalTask(taskDao, tasksList), (data) ->{
-                                       // tasksRetrieved(data);
                                         preferencesHelper.saveUpdateTime(System.nanoTime());
+                                        tasksRetrieved(data);
                                         fetchMyTasksFromDatabase();
                                     });
                                 }
@@ -149,7 +159,7 @@ public class TaskRepository {
                             })
 
             );
-        return myTasks;
+        return allTasks;
     }
 
 

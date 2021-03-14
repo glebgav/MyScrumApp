@@ -51,6 +51,10 @@ public class TeamRepository {
         return team;
     }
 
+    public MutableLiveData<List<Team>> getAllTeamsFromRemote(){
+        return fetchFromRemote();
+    }
+
     public void teamsRetrieved(List<Team> teamsList){
         allTeams.setValue(teamsList);
     }
