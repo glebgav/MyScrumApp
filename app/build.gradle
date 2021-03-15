@@ -9,6 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.myscrumapp"
+        multiDexEnabled true
         minSdkVersion 19
         targetSdkVersion 30
         versionCode 1
@@ -79,9 +80,13 @@ dependencies {
 
     implementation "com.google.firebase:firebase-core:18.0.2"
 
-    implementation "com.android.support:multidex:1.0.3"
+    implementation 'androidx.multidex:multidex:2.0.1'
 
     implementation "com.google.android.material:material:1.4.0-alpha01"
+
+    // https://mvnrepository.com/artifact/org.modelmapper/modelmapper
+    implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.9'
+
 
     compileOnly 'org.projectlombok:lombok:1.18.16'
     annotationProcessor 'org.projectlombok:lombok:1.18.16'

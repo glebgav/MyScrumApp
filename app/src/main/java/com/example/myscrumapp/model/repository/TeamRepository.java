@@ -1,9 +1,14 @@
 package com.example.myscrumapp.model.repository;
 
 import android.app.Application;
+
+import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import com.example.myscrumapp.model.entity.LoggedInUser;
+import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.model.entity.Team;
+import com.example.myscrumapp.model.entity.TeamToCreate;
+import com.example.myscrumapp.model.entity.UserRegisterDetails;
 import com.example.myscrumapp.model.network.ApiService;
 import com.example.myscrumapp.model.room.dao.TeamDao;
 import com.example.myscrumapp.model.room.db.MyDatabase;
@@ -17,12 +22,17 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
+import lombok.SneakyThrows;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class TeamRepository {
 
     private final TeamDao teamDao;
     private final MutableLiveData<List<Team>> allTeams  = new MutableLiveData<>();
     private final MutableLiveData<Team> team = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> teamIsCreated = new MutableLiveData<>();
     private final ApiService apiService;
     private final TaskRunner taskRunner = new TaskRunner();
     private final SharedPreferencesHelper preferencesHelper;
@@ -34,6 +44,14 @@ public class TeamRepository {
         preferencesHelper = SharedPreferencesHelper.getInstance(application);
         teamDao = database.teamDao();
         apiService = ApiService.getInstance();
+    }
+
+    public void setIsCreatedLiveData(Boolean value){
+        teamIsCreated.setValue(value);
+    }
+
+    public MutableLiveData<Boolean> getIsCreatedLiveData(){
+        return teamIsCreated;
     }
 
     public MutableLiveData<List<Team>> getAllTeams(){
@@ -49,6 +67,26 @@ public class TeamRepository {
     public MutableLiveData<Team> getTeam(String teamId){
         taskRunner.executeAsync(new getTeamByTeamId(teamDao, teamId), this::teamRetrieved);
         return team;
+    }
+
+    public void addTeam(TeamToCreate team){
+        LoggedInUser user = preferencesHelper.getUser();
+        disposable.add(
+                apiService.getTeamsApi().createTeam(user.token, team)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<TeamToCreate>() {
+                            @Override
+                            public void onSuccess(@io.reactivex.annotations.NonNull TeamToCreate team) {
+                                setIsCreatedLiveData(true);
+                                }
+                            @Override
+                            public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                                setIsCreatedLiveData(false);
+                                e.printStackTrace();
+                            }
+                        })
+        );
     }
 
     public MutableLiveData<List<Team>> getAllTeamsFromRemote(){

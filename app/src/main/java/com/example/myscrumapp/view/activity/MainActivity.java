@@ -93,6 +93,11 @@ public class MainActivity extends AppCompatActivity {
             navController.navigate(R.id.addUserFragment);
             closeFABMenu();
         });
+
+        addTeam.setOnClickListener(view -> {
+            navController.navigate(R.id.addTeamFragment);
+            closeFABMenu();
+        });
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

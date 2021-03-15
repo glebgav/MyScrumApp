@@ -60,4 +60,8 @@
         android:name="com.example.myscrumapp.view.fragment.AddUserFragment"
         android:label="Add User"
         tools:layout="@layout/fragment_add_user" />
+    <fragment
+        android:id="@+id/addTeamFragment"
+        android:name="com.example.myscrumapp.view.fragment.AddTeamFragment"
+        android:label="Add Team" />
 </navigation>

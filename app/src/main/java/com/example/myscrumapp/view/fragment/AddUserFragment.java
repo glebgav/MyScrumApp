@@ -103,7 +103,8 @@ public class AddUserFragment extends Fragment {
                 binding.editTextEmail.setVisibility(View.VISIBLE);
                 binding.isManager.setVisibility(View.VISIBLE);
                 binding.saveUser.setVisibility(View.VISIBLE);
-                binding.teamListSpinner.setVisibility(View.VISIBLE);
+                binding.teamListSpinnerLayout.setVisibility(View.VISIBLE);
+                binding.taskListSpinnerLayout.setVisibility(View.VISIBLE);
                 if(created){
                     Snackbar.make(view, "User Created Successfully", Snackbar.LENGTH_LONG).show();
                 }
@@ -124,7 +125,8 @@ public class AddUserFragment extends Fragment {
                     binding.editTextEmail.setVisibility(View.GONE);
                     binding.isManager.setVisibility(View.GONE);
                     binding.saveUser.setVisibility(View.GONE);
-                    binding.teamListSpinner.setVisibility(View.GONE);
+                    binding.teamListSpinnerLayout.setVisibility(View.GONE);
+                    binding.taskListSpinnerLayout.setVisibility(View.GONE);
                 }
             }
         });
