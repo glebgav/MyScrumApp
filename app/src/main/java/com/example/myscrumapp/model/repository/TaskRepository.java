@@ -4,6 +4,7 @@ import android.app.Application;
 import androidx.lifecycle.MutableLiveData;
 import com.example.myscrumapp.model.entity.LoggedInUser;
 import com.example.myscrumapp.model.entity.Task;
+import com.example.myscrumapp.model.entity.TeamToCreate;
 import com.example.myscrumapp.model.network.ApiService;
 import com.example.myscrumapp.model.room.dao.TaskDao;
 import com.example.myscrumapp.model.room.db.MyDatabase;
@@ -28,6 +29,7 @@ public class TaskRepository {
     private final MutableLiveData<List<Task>> teamTasks  = new MutableLiveData<>();
     private final MutableLiveData<List<Task>> myTasks  = new MutableLiveData<>();
     private final MutableLiveData<Task> task = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> taskIsCreated = new MutableLiveData<>();
     private final ApiService apiService;
     private final TaskRunner taskRunner = new TaskRunner();
     private final SharedPreferencesHelper preferencesHelper;
@@ -107,6 +109,26 @@ public class TaskRepository {
         );
     }
 
+    public void addTask(Task task){
+        LoggedInUser user = preferencesHelper.getUser();
+        disposable.add(
+                apiService.getTasksApi().createTask(user.token, task)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<Task>() {
+                            @Override
+                            public void onSuccess(@NonNull Task task) {
+                                setIsCreatedLiveData(true);
+                            }
+                            @Override
+                            public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                                setIsCreatedLiveData(false);
+                                e.printStackTrace();
+                            }
+                        })
+        );
+    }
+
     public void tasksRetrieved(List<Task> tasksList){
         allTasks.setValue(tasksList);
     }
@@ -122,6 +144,16 @@ public class TaskRepository {
     public void taskRetrieved(Task task){
         this.task.setValue(task);
     }
+
+    public void setIsCreatedLiveData(Boolean value){
+        taskIsCreated.setValue(value);
+    }
+
+    public MutableLiveData<Boolean> getIsCreatedLiveData(){
+        return taskIsCreated;
+    }
+
+
 
 
     public void refreshBypassCache(){

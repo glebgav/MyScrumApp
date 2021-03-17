@@ -64,4 +64,8 @@
         android:id="@+id/addTeamFragment"
         android:name="com.example.myscrumapp.view.fragment.AddTeamFragment"
         android:label="Add Team" />
+    <fragment
+        android:id="@+id/addTaskFragment"
+        android:name="com.example.myscrumapp.view.fragment.AddTaskFragment"
+        android:label="Add Task" />
 </navigation>
