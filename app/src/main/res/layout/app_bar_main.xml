@@ -66,27 +66,33 @@
 
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/fabAddTask"
+        android:id="@+id/fabTasks"
         app:backgroundTint="@color/white"
-        android:text="@string/fab_add_task"
+        android:text="@string/fab_tasks"
+        android:paddingStart="25dp"
+        android:paddingEnd="0dp"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/standard_45"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin" />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/fabAddTeam"
+        android:id="@+id/fabTeams"
         app:backgroundTint="@color/white"
-        android:text="@string/fab_add_team"
+        android:paddingStart="25dp"
+        android:paddingEnd="0dp"
+        android:text="@string/fab_teams"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/standard_45"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin" />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/fabAddUser"
+        android:id="@+id/fabUsers"
         app:backgroundTint="@color/white"
-        android:text="@string/fab_add_user"
+        android:paddingStart="25dp"
+        android:paddingEnd="0dp"
+        android:text="@string/fab_users"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/standard_45"
         android:layout_gravity="bottom|end"

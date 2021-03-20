@@ -20,19 +20,19 @@ public class MultiSelectionSpinner extends AppCompatSpinner implements
 
     ArrayList<Item> items = null;
     boolean[] selection = null;
-    ArrayAdapter adapter;
+    ArrayAdapter<String> adapter;
 
     public MultiSelectionSpinner(Context context) {
         super(context);
 
-        adapter = new ArrayAdapter(context, R.layout.custom_spinner);
+        adapter = new ArrayAdapter<>(context, R.layout.custom_spinner);
         super.setAdapter(adapter);
     }
 
     public MultiSelectionSpinner(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        adapter = new ArrayAdapter(context,
+        adapter = new ArrayAdapter<>(context,
                 R.layout.custom_spinner);
         super.setAdapter(adapter);
     }
@@ -52,6 +52,7 @@ public class MultiSelectionSpinner extends AppCompatSpinner implements
 
     @Override
     public boolean performClick() {
+        super.performClick();
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         String[] itemNames;
         if(items != null) {
@@ -89,9 +90,7 @@ public class MultiSelectionSpinner extends AppCompatSpinner implements
     }
 
     public void setSelection(ArrayList<Item> selection) {
-        for (int i = 0; i < this.selection.length; i++) {
-            this.selection[i] = false;
-        }
+        Arrays.fill(this.selection, false);
 
         for (Item sel : selection) {
             for (int j = 0; j < items.size(); ++j) {

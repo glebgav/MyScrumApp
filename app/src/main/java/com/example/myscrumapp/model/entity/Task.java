@@ -5,12 +5,14 @@ import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
 @Entity(tableName = "tasks")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Task {
 
     @PrimaryKey(autoGenerate = true)
@@ -32,6 +34,7 @@ public class Task {
 
     @Embedded
     private TeamInTask teamDetails;
+
 
     public Task(String taskId, String title, String description, int status, User userDetails, TeamInTask teamDetails) {
         this.taskId = taskId;

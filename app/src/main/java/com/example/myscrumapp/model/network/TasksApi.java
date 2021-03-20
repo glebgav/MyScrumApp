@@ -6,6 +6,7 @@ import com.example.myscrumapp.model.entity.TeamToCreate;
 import java.util.List;
 import io.reactivex.Single;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
@@ -24,4 +25,7 @@ public interface TasksApi {
 
     @POST("tasks")
     Single<Task> createTask(@Header("authorization") String token, @Body Task task);
+
+    @DELETE("tasks/{taskId}")
+    Single<OperationResponseModel> deleteTask(@Header("authorization") String token,@Path("taskId") String taskId);
 }

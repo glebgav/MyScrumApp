@@ -19,7 +19,6 @@ import com.example.myscrumapp.utils.SharedPreferencesHelper;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -47,9 +46,9 @@ public class MainActivity extends AppCompatActivity {
                 fab.setVisibility(View.GONE);
             }
         }
-        addUser = findViewById(R.id.fabAddUser);
-        addTeam = findViewById(R.id.fabAddTeam);
-        addTask = findViewById(R.id.fabAddTask);
+        addUser = findViewById(R.id.fabUsers);
+        addTeam = findViewById(R.id.fabTeams);
+        addTask = findViewById(R.id.fabTasks);
 
         addUser.setVisibility(View.GONE);
         addTeam.setVisibility(View.GONE);

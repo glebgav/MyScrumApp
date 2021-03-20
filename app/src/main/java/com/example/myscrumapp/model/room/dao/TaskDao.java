@@ -2,11 +2,14 @@ package com.example.myscrumapp.model.room.dao;
 
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 import com.example.myscrumapp.model.entity.Task;
 import java.util.List;
+
+import retrofit2.http.DELETE;
 
 @Dao
 public interface TaskDao {
@@ -18,6 +21,9 @@ public interface TaskDao {
 
     @Update
     Void update(Task task);
+
+    @Delete
+    Void delete(Task task);
 
     @Query("select * from tasks")
     List<Task> getAllTasks();

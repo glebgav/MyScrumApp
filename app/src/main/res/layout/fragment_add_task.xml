@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <variable
@@ -7,18 +8,52 @@
             type="com.example.myscrumapp.model.entity.Task" />
     </data>
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.fragment.AddTaskFragment">
+        tools:context=".view.fragment.AddTaskFragment"
+        android:orientation="vertical">
+
 
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/selectTaskSpinnerLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="top"
+            android:orientation="horizontal"
+            android:layout_below="@+id/taskBody">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="@string/select_existing"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textSize="20sp"
+                android:textStyle="normal" />
+
+            <Spinner
+                android:id="@+id/selectTaskSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/taskBody"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_below="@+id/taskButtonsLayout"
+            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="-6dp"
             android:orientation="vertical"
             android:padding="50dp">
-
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edit_text_title"
@@ -30,31 +65,30 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edit_text_description"
-                android:lines="3"
-                android:scrollbars="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/prompt_description"
                 android:inputType="text"
+                android:lines="3"
+                android:scrollbars="vertical"
                 android:text="@={task.description}" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/statusSpinnerLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                >
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:padding="5dp"
                     android:text="@string/status"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textStyle="normal"
                     android:textSize="20sp"
-                    android:padding="5dp" />
+                    android:textStyle="normal" />
 
-                <com.example.myscrumapp.view.shared.MultiSelectionSpinner
+                <com.example.myscrumapp.view.shared.SelectionSpinner
                     android:id="@+id/statusSpinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
@@ -66,19 +100,18 @@
                 android:id="@+id/teamInTaskSpinnerLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                >
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:padding="5dp"
                     android:text="@string/select_team"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textStyle="normal"
                     android:textSize="20sp"
-                    android:padding="5dp" />
+                    android:textStyle="normal" />
 
-                <com.example.myscrumapp.view.shared.MultiSelectionSpinner
+                <com.example.myscrumapp.view.shared.SelectionSpinner
                     android:id="@+id/teamInTaskSpinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
@@ -89,45 +122,89 @@
                 android:id="@+id/userInTaskSpinnerLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                >
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:padding="5dp"
                     android:text="@string/user"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textStyle="normal"
                     android:textSize="20sp"
-                    android:padding="5dp" />
+                    android:textStyle="normal" />
 
-                <com.example.myscrumapp.view.shared.MultiSelectionSpinner
+                <com.example.myscrumapp.view.shared.SelectionSpinner
                     android:id="@+id/userInTaskSpinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/taskButtonsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            android:padding="@dimen/standard_21"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="100dp"
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/save_task"
+                android:padding="@dimen/standard_21"
+                android:layout_weight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:paddingStart="40dp"
-                android:paddingEnd="40dp"
                 android:text="@string/add"
                 android:textColor="#FFF" />
 
+            <Button
+                android:id="@+id/edit_task"
+                android:padding="@dimen/standard_21"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1"
+                android:text="@string/edit"
+                android:textColor="#FFF"
+                app:backgroundTint="#FFC107" />
+
+            <Button
+                android:id="@+id/delete_task"
+                android:padding="@dimen/standard_21"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1"
+                android:text="@string/delete"
+                android:textColor="#FFF"
+                app:backgroundTint="#C80E0E" />
+
+
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <ProgressBar
-            android:id="@+id/taskAddedLoadingView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone" />
+        <FrameLayout
+            android:id="@+id/taskLoadingView"
+            android:animateLayoutChanges="true"
+            android:alpha="0.4"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:layout_gravity="center" />
+        </FrameLayout>
+
+    </RelativeLayout>
 
 
-    </FrameLayout>
 </layout>

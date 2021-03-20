@@ -19,7 +19,8 @@
         <activity
             android:name=".view.activity.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/Theme.MyScrumApp.NoActionBar">
+            android:theme="@style/Theme.MyScrumApp.NoActionBar"
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

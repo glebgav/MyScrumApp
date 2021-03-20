@@ -18,6 +18,9 @@ import java.util.List;
 
 public class AddTaskViewModel extends AndroidViewModel {
     private final MutableLiveData<Boolean> taskCreated;
+    private final MutableLiveData<Boolean> taskDeleted;
+    private final MutableLiveData<Boolean> taskUpdated;
+    private final MutableLiveData<List<Task>> tasks;
     private final MutableLiveData<List<User>> users;
     private final MutableLiveData<List<Team>> teams;
     private final UserRepository userRepository;
@@ -32,15 +35,38 @@ public class AddTaskViewModel extends AndroidViewModel {
         taskRepository = new TaskRepository(application);
         users = userRepository.getAllUsers();
         teams = teamRepository.getAllTeams();
+        tasks = taskRepository.getAllTasksFromRemote();
         taskCreated = taskRepository.getIsCreatedLiveData();
+        taskDeleted = taskRepository.getIsDeletedLiveData();
+        taskUpdated = taskRepository.getIsUpdatedLiveData();
     }
 
     public void addTask(Task task){
         taskRepository.addTask(task);
     }
 
+    public void updateTask(Task task){
+        taskRepository.update(task);
+    }
+
+    public void deleteTask(Task task){
+        taskRepository.deleteTask(task);
+    }
+
+    public void refreshTasks(){
+        taskRepository.getAllTasksFromRemote();
+    }
+
     public  MutableLiveData<Boolean> getIsTaskCreated(){
         return taskCreated;
+    }
+
+    public  MutableLiveData<Boolean> getIsTaskDeleted(){
+        return taskDeleted;
+    }
+
+    public  MutableLiveData<Boolean> getIsTaskUpdated(){
+        return taskUpdated;
     }
 
     public MutableLiveData<Boolean> getIsLoading() {
@@ -53,6 +79,10 @@ public class AddTaskViewModel extends AndroidViewModel {
 
     public MutableLiveData<List<User>> getUsersLiveData() {
         return users;
+    }
+
+    public MutableLiveData<List<Task>> getTasksLiveData() {
+        return tasks;
     }
 
 

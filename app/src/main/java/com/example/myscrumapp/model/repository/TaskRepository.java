@@ -4,15 +4,14 @@ import android.app.Application;
 import androidx.lifecycle.MutableLiveData;
 import com.example.myscrumapp.model.entity.LoggedInUser;
 import com.example.myscrumapp.model.entity.Task;
-import com.example.myscrumapp.model.entity.TeamToCreate;
 import com.example.myscrumapp.model.network.ApiService;
+import com.example.myscrumapp.model.network.OperationResponseModel;
 import com.example.myscrumapp.model.room.dao.TaskDao;
 import com.example.myscrumapp.model.room.db.MyDatabase;
 import com.example.myscrumapp.utils.GlobalConstants;
 import com.example.myscrumapp.utils.SharedPreferencesHelper;
 import com.example.myscrumapp.utils.TaskRunner;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -30,6 +29,8 @@ public class TaskRepository {
     private final MutableLiveData<List<Task>> myTasks  = new MutableLiveData<>();
     private final MutableLiveData<Task> task = new MutableLiveData<>();
     private final MutableLiveData<Boolean> taskIsCreated = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> taskIsDeleted = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> taskIsUpdated = new MutableLiveData<>();
     private final ApiService apiService;
     private final TaskRunner taskRunner = new TaskRunner();
     private final SharedPreferencesHelper preferencesHelper;
@@ -69,15 +70,13 @@ public class TaskRepository {
         return teamTasks;
     }
 
-    public MutableLiveData<List<Task>> getTasksByTeamIdAndStatus(String teamId, int status){
+    public void getTasksByTeamIdAndStatus(String teamId, int status){
         taskRunner.executeAsync(new GetTaskByTeamIdAndStatusTask(taskDao, teamId, status), this::teamTasksRetrieved);
-        return teamTasks;
     }
 
-    public MutableLiveData<List<Task>> getMyTasksByStatus(int status){
+    public void getMyTasksByStatus(int status){
         LoggedInUser user = preferencesHelper.getUser();
         taskRunner.executeAsync(new GetTaskByUserIdAndStatusTask(taskDao, user.userId, status), this::myTasksRetrieved);
-        return myTasks;
     }
 
 
@@ -100,6 +99,7 @@ public class TaskRepository {
                         .subscribeWith(new DisposableSingleObserver<Task>() {
                             @Override
                             public void onSuccess(@NonNull Task task) {
+                                setIsUpdatedLiveData(true);
                             }
                             @Override
                             public void onError(@NonNull Throwable e) {
@@ -123,6 +123,28 @@ public class TaskRepository {
                             @Override
                             public void onError(@io.reactivex.annotations.NonNull Throwable e) {
                                 setIsCreatedLiveData(false);
+                                e.printStackTrace();
+                            }
+                        })
+        );
+    }
+
+    public void deleteTask(Task task){
+        LoggedInUser user = preferencesHelper.getUser();
+        disposable.add(
+                apiService.getTasksApi().deleteTask(user.token, task.getTaskId())
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<OperationResponseModel>() {
+                            @Override
+                            public void onSuccess(@NonNull OperationResponseModel operationResponseModel) {
+                                setIsDeletedLiveData(true);
+                                taskRunner.executeAsync(new DeleteTaskInLocalTask(taskDao, task), (data) ->{});
+                            }
+
+                            @Override
+                            public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                                setIsDeletedLiveData(false);
                                 e.printStackTrace();
                             }
                         })
@@ -153,7 +175,21 @@ public class TaskRepository {
         return taskIsCreated;
     }
 
+    public void setIsUpdatedLiveData(Boolean value){
+        taskIsUpdated.setValue(value);
+    }
 
+    public MutableLiveData<Boolean> getIsUpdatedLiveData(){
+        return taskIsUpdated;
+    }
+
+    public void setIsDeletedLiveData(Boolean value){
+        taskIsDeleted.setValue(value);
+    }
+
+    public MutableLiveData<Boolean> getIsDeletedLiveData(){
+        return taskIsDeleted;
+    }
 
 
     public void refreshBypassCache(){
@@ -335,6 +371,22 @@ public class TaskRepository {
         @Override
         public Void call() {
             return taskDao.update(task);
+        }
+    }
+
+    private static class DeleteTaskInLocalTask implements Callable<Void> {
+        private final TaskDao taskDao;
+        private final Task task;
+
+        public DeleteTaskInLocalTask(TaskDao taskDao, Task task)
+        {
+            this.taskDao = taskDao;
+            this.task = task;
+        }
+
+        @Override
+        public Void call() {
+            return taskDao.delete(task);
         }
     }
 
