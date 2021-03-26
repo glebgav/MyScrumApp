@@ -46,7 +46,7 @@ public class TaskListViewModel extends AndroidViewModel {
     }
 
     public void filterMyTasksByStatus(int status){
-        taskRepository.getMyTasksByStatus(status);
+        taskRepository.getMyTasksFromLocalByStatus(status);
     }
 
 

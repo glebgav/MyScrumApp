@@ -4,11 +4,9 @@ import android.app.Application;
 import androidx.lifecycle.MutableLiveData;
 import com.example.myscrumapp.model.entity.LoggedInUser;
 import com.example.myscrumapp.model.entity.Task;
-import com.example.myscrumapp.model.entity.Team;
 import com.example.myscrumapp.model.network.ApiService;
 import com.example.myscrumapp.model.network.OperationResponseModel;
 import com.example.myscrumapp.model.room.dao.TaskDao;
-import com.example.myscrumapp.model.room.dao.TeamDao;
 import com.example.myscrumapp.model.room.db.MyDatabase;
 import com.example.myscrumapp.utils.GlobalConstants;
 import com.example.myscrumapp.utils.SharedPreferencesHelper;
@@ -46,24 +44,38 @@ public class TaskRepository {
         apiService = ApiService.getInstance();
     }
 
+    public void refreshBypassCache(){
+
+        getAllTasksFromRemote();
+    }
+
 
     public MutableLiveData<List<Task>> getMyTasks(){
         Long updateTime = preferencesHelper.getUpdateTime();
         Long currentTime = System.nanoTime();
-        if(updateTime != 0 && currentTime -updateTime < GlobalConstants.REFRESH_TIME) {
-            return fetchMyTasksFromDatabase();
-        }else{
-            return fetchFromRemote();
+
+        if(!(updateTime != 0 && currentTime -updateTime < GlobalConstants.REFRESH_TIME)){
+            getAllTasksFromRemote();
         }
+        return getMyTasksFromLocal();
     }
 
-    public MutableLiveData<List<Task>> getAllTasksFromRemote(){
-        return fetchFromRemote();
-    }
 
     private MutableLiveData<List<Task>> getAllTasksFromLocal(){
         taskRunner.executeAsync(new GetAllTasksFromLocalTask(taskDao), this::tasksRetrieved);
         return allTasks;
+    }
+
+    public MutableLiveData<List<Task>> getMyTasksFromLocal(){
+
+        LoggedInUser user = preferencesHelper.getUser();
+        taskRunner.executeAsync(new GetTaskByUserIdTask(taskDao, user.userId), this::myTasksRetrieved);
+        return myTasks;
+    }
+
+    public void getMyTasksFromLocalByStatus(int status){
+        LoggedInUser user = preferencesHelper.getUser();
+        taskRunner.executeAsync(new GetTaskByUserIdAndStatusTask(taskDao, user.userId, status), this::myTasksRetrieved);
     }
 
 
@@ -76,10 +88,7 @@ public class TaskRepository {
         taskRunner.executeAsync(new GetTaskByTeamIdAndStatusTask(taskDao, teamId, status), this::teamTasksRetrieved);
     }
 
-    public void getMyTasksByStatus(int status){
-        LoggedInUser user = preferencesHelper.getUser();
-        taskRunner.executeAsync(new GetTaskByUserIdAndStatusTask(taskDao, user.userId, status), this::myTasksRetrieved);
-    }
+
 
 
     public MutableLiveData<Task> getTask(String taskId){
@@ -153,6 +162,38 @@ public class TaskRepository {
         );
     }
 
+
+    public MutableLiveData<List<Task>> getAllTasksFromRemote() {
+        LoggedInUser user = preferencesHelper.getUser();
+        disposable.add(
+                apiService.getTasksApi().getAllTasks(user.token, 0, 1000)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<List<Task>>() {
+                            @Override
+                            public void onSuccess(@io.reactivex.annotations.NonNull List<Task> taskList) {
+                                taskRunner.executeAsync(new TaskRepository.InsertTasksFromRemoteToLocalTask(taskDao, taskList), (data) -> {
+                                    allTasksRetrieved(data);
+                                    getMyTasksFromLocal();
+                                    preferencesHelper.saveUpdateTime(System.nanoTime());
+                                });
+
+                            }
+
+                            @Override
+                            public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                                e.printStackTrace();
+                            }
+                        })
+        );
+        return allTasks;
+    }
+
+
+    public void allTasksRetrieved(List<Task> tasksList){
+        allTasks.setValue(tasksList);
+    }
+
     public void tasksRetrieved(List<Task> tasksList){
         allTasks.setValue(tasksList);
     }
@@ -191,45 +232,6 @@ public class TaskRepository {
 
     public MutableLiveData<Boolean> getIsDeletedLiveData(){
         return taskIsDeleted;
-    }
-
-
-    public void refreshBypassCache(){
-        fetchFromRemote();
-    }
-
-    public MutableLiveData<List<Task>> fetchMyTasksFromDatabase(){
-
-        LoggedInUser user = preferencesHelper.getUser();
-        taskRunner.executeAsync(new GetTaskByUserIdTask(taskDao, user.userId), this::myTasksRetrieved);
-        return myTasks;
-    }
-
-
-    private MutableLiveData<List<Task>> fetchFromRemote() {
-        LoggedInUser user = preferencesHelper.getUser();
-            disposable.add(
-                    apiService.getTasksApi().getTeamsTasks(user.token,user.userId)
-                            .subscribeOn(Schedulers.newThread())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribeWith(new DisposableSingleObserver<List<Task>>() {
-                                @Override
-                                public void onSuccess(@io.reactivex.annotations.NonNull List<Task> tasksList) {
-                                    taskRunner.executeAsync(new InsertTasksFromRemoteToLocalTask(taskDao, tasksList), (data) ->{
-                                        preferencesHelper.saveUpdateTime(System.nanoTime());
-                                        tasksRetrieved(data);
-                                        fetchMyTasksFromDatabase();
-                                    });
-                                }
-
-                                @Override
-                                public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                                    e.printStackTrace();
-                                }
-                            })
-
-            );
-        return allTasks;
     }
 
 

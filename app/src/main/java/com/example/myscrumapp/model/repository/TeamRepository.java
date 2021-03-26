@@ -49,29 +49,10 @@ public class TeamRepository {
         apiService = ApiService.getInstance();
     }
 
-    public MutableLiveData<Boolean> getIsCreatedLiveData() {
-        return teamIsCreated;
+    public void refreshBypassCache() {
+        getAllTeamsFromRemote();
     }
 
-    public void setIsCreatedLiveData(Boolean value) {
-        teamIsCreated.setValue(value);
-    }
-
-    public MutableLiveData<Boolean> getIsUpdatedLiveData() {
-        return teamIsUpdated;
-    }
-
-    public void setIsUpdatedLiveData(Boolean value) {
-        teamIsUpdated.setValue(value);
-    }
-
-    public MutableLiveData<Boolean> getIsDeletedLiveData() {
-        return teamIsDeleted;
-    }
-
-    public void setIsDeletedLiveData(Boolean value) {
-        teamIsDeleted.setValue(value);
-    }
 
     public MutableLiveData<List<Team>> getMyTeams() {
         Long updateTime = preferencesHelper.getUpdateTime();
@@ -89,6 +70,9 @@ public class TeamRepository {
         return allTeams;
     }
 
+    public void getMyTeamsFromLocal() {
+        taskRunner.executeAsync(new GetMyTeamsFromLocalTask(teamDao), this::myTeamsRetrieved);
+    }
 
 
     public MutableLiveData<Team> getTeam(String teamId) {
@@ -165,9 +149,7 @@ public class TeamRepository {
         );
     }
 
-    public void getMyTeamsFromLocal() {
-        taskRunner.executeAsync(new GetMyTeamsFromLocalTask(teamDao), this::myTeamsRetrieved);
-    }
+
 
     public MutableLiveData<List<Team>> getAllTeamsFromRemote() {
         LoggedInUser user = preferencesHelper.getUser();
@@ -193,6 +175,33 @@ public class TeamRepository {
                         })
         );
         return allTeams;
+
+
+    }
+
+
+    public MutableLiveData<Boolean> getIsCreatedLiveData() {
+        return teamIsCreated;
+    }
+
+    public void setIsCreatedLiveData(Boolean value) {
+        teamIsCreated.setValue(value);
+    }
+
+    public MutableLiveData<Boolean> getIsUpdatedLiveData() {
+        return teamIsUpdated;
+    }
+
+    public void setIsUpdatedLiveData(Boolean value) {
+        teamIsUpdated.setValue(value);
+    }
+
+    public MutableLiveData<Boolean> getIsDeletedLiveData() {
+        return teamIsDeleted;
+    }
+
+    public void setIsDeletedLiveData(Boolean value) {
+        teamIsDeleted.setValue(value);
     }
 
     public void myTeamsRetrieved(List<Team> teamsList) {
@@ -207,15 +216,6 @@ public class TeamRepository {
         this.team.setValue(team);
     }
 
-
-    public void refreshBypassCache() {
-        getAllTeamsFromRemote();
-    }
-
-    private MutableLiveData<List<Team>> fetchFromDatabase() {
-        taskRunner.executeAsync(new GetAllTeamsFromLocalTask(teamDao), this::myTeamsRetrieved);
-        return myTeams;
-    }
 
     private static class InsertAllTeamsFromRemoteToLocalTask implements Callable<List<Team>> {
 

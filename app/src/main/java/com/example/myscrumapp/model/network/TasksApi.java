@@ -11,13 +11,11 @@ import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface TasksApi {
-    @GET("users/{userId}/teams/tasks")
-    Single<List<Task>> getTeamsTasks(@Header("authorization") String token,@Path("userId") String userId);
-
-    @GET("users/{userId}/tasks")
-    Single<List<Task>> getMyTasks(@Header("authorization") String token,@Path("userId") String userId);
+    @GET("tasks")
+    Single<List<Task>> getAllTasks(@Header("authorization") String token, @Query("page")int page, @Query("limit") int limit);
 
     @PUT("tasks/{taskId}")
     Single<Task> updateTask(@Header("authorization") String token,@Path("taskId") String taskId, @Body Task task);
