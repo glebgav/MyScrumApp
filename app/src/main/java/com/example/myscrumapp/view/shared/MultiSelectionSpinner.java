@@ -11,6 +11,9 @@ import androidx.appcompat.widget.AppCompatSpinner;
 
 import com.example.myscrumapp.R;
 import com.example.myscrumapp.model.entity.Item;
+import com.example.myscrumapp.model.entity.Team;
+import com.example.myscrumapp.model.entity.User;
+import com.example.myscrumapp.utils.GlobalConstants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,20 +92,31 @@ public class MultiSelectionSpinner extends AppCompatSpinner implements
         Arrays.fill(selection, false);
     }
 
-    public void setSelection(ArrayList<Item> selection) {
-        Arrays.fill(this.selection, false);
+    public void resetSelection() {
+        if (items != null) {
+            Arrays.fill(this.selection, false);
+            adapter.clear();
+            adapter.add(buildSelectedItemString());
+        }
+    }
 
-        for (Item sel : selection) {
-            for (int j = 0; j < items.size(); ++j) {
-                if (items.get(j).getValue().equals(sel.getValue())) {
-                    this.selection[j] = true;
+
+    public void setSelection(ArrayList<Item> mySelection) {
+
+        if(items != null){
+            Arrays.fill(this.selection, false);
+            for (Item sel : mySelection) {
+                for (int j = 0; j < items.size(); ++j) {
+                    if (items.get(j).getName().equals(sel.getName())) {
+                        this.selection[j] = true;
+                    }
                 }
             }
+            adapter.clear();
+            adapter.add(buildSelectedItemString());
         }
-
-        adapter.clear();
-        adapter.add(buildSelectedItemString());
     }
+
 
     private String buildSelectedItemString() {
         StringBuilder sb = new StringBuilder();

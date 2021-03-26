@@ -1,7 +1,6 @@
 package com.example.myscrumapp.model.network;
 
 import com.example.myscrumapp.model.entity.Task;
-import com.example.myscrumapp.model.entity.TeamToCreate;
 
 import java.util.List;
 import io.reactivex.Single;

@@ -2,84 +2,112 @@ package com.example.myscrumapp.model.repository;
 
 import android.app.Application;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
+
 import com.example.myscrumapp.model.entity.LoggedInUser;
-import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.model.entity.Team;
-import com.example.myscrumapp.model.entity.TeamToCreate;
-import com.example.myscrumapp.model.entity.UserRegisterDetails;
+import com.example.myscrumapp.model.entity.User;
 import com.example.myscrumapp.model.network.ApiService;
+import com.example.myscrumapp.model.network.OperationResponseModel;
 import com.example.myscrumapp.model.room.dao.TeamDao;
 import com.example.myscrumapp.model.room.db.MyDatabase;
 import com.example.myscrumapp.utils.GlobalConstants;
 import com.example.myscrumapp.utils.SharedPreferencesHelper;
 import com.example.myscrumapp.utils.TaskRunner;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
-import lombok.SneakyThrows;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class TeamRepository {
 
     private final TeamDao teamDao;
-    private final MutableLiveData<List<Team>> allTeams  = new MutableLiveData<>();
+    private final ApiService apiService;
+
+    private final MutableLiveData<List<Team>> myTeams = new MutableLiveData<>();
+    private final MutableLiveData<List<Team>> allTeams = new MutableLiveData<>();
     private final MutableLiveData<Team> team = new MutableLiveData<>();
     private final MutableLiveData<Boolean> teamIsCreated = new MutableLiveData<>();
-    private final ApiService apiService;
+    private final MutableLiveData<Boolean> teamIsUpdated = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> teamIsDeleted = new MutableLiveData<>();
+
     private final TaskRunner taskRunner = new TaskRunner();
     private final SharedPreferencesHelper preferencesHelper;
     private final CompositeDisposable disposable = new CompositeDisposable();
 
 
-    public TeamRepository(Application application){
+    public TeamRepository(Application application) {
         MyDatabase database = MyDatabase.getInstance(application);
         preferencesHelper = SharedPreferencesHelper.getInstance(application);
         teamDao = database.teamDao();
         apiService = ApiService.getInstance();
     }
 
-    public void setIsCreatedLiveData(Boolean value){
-        teamIsCreated.setValue(value);
-    }
-
-    public MutableLiveData<Boolean> getIsCreatedLiveData(){
+    public MutableLiveData<Boolean> getIsCreatedLiveData() {
         return teamIsCreated;
     }
 
-    public MutableLiveData<List<Team>> getAllTeams(){
-        Long updateTime = preferencesHelper.getUpdateTime();
-        Long currentTime = System.nanoTime();
-        if(updateTime != 0 && currentTime -updateTime < GlobalConstants.REFRESH_TIME) {
-            return fetchFromDatabase();
-        }else{
-            return fetchFromRemote();
-        }
+    public void setIsCreatedLiveData(Boolean value) {
+        teamIsCreated.setValue(value);
     }
 
-    public MutableLiveData<Team> getTeam(String teamId){
-        taskRunner.executeAsync(new getTeamByTeamId(teamDao, teamId), this::teamRetrieved);
+    public MutableLiveData<Boolean> getIsUpdatedLiveData() {
+        return teamIsUpdated;
+    }
+
+    public void setIsUpdatedLiveData(Boolean value) {
+        teamIsUpdated.setValue(value);
+    }
+
+    public MutableLiveData<Boolean> getIsDeletedLiveData() {
+        return teamIsDeleted;
+    }
+
+    public void setIsDeletedLiveData(Boolean value) {
+        teamIsDeleted.setValue(value);
+    }
+
+    public MutableLiveData<List<Team>> getMyTeams() {
+        Long updateTime = preferencesHelper.getUpdateTime();
+        Long currentTime = System.nanoTime();
+        if (updateTime != 0 && currentTime - updateTime < GlobalConstants.REFRESH_TIME) {
+            getAllTeamsFromRemote();
+        } else {
+            getMyTeamsFromLocal();
+        }
+        return myTeams;
+    }
+
+    public MutableLiveData<List<Team>> getAllTeams() {
+        getAllTeamsFromRemote();
+        return allTeams;
+    }
+
+
+
+    public MutableLiveData<Team> getTeam(String teamId) {
+        taskRunner.executeAsync(new GetTeamByTeamId(teamDao, teamId), this::teamRetrieved);
         return team;
     }
 
-    public void addTeam(TeamToCreate team){
+    public void addTeamInRemote(Team team) {
         LoggedInUser user = preferencesHelper.getUser();
         disposable.add(
                 apiService.getTeamsApi().createTeam(user.token, team)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<TeamToCreate>() {
+                        .subscribeWith(new DisposableSingleObserver<Team>() {
                             @Override
-                            public void onSuccess(@io.reactivex.annotations.NonNull TeamToCreate team) {
+                            public void onSuccess(@io.reactivex.annotations.NonNull Team createdTeam) {
                                 setIsCreatedLiveData(true);
-                                }
+                            }
+
                             @Override
                             public void onError(@io.reactivex.annotations.NonNull Throwable e) {
                                 setIsCreatedLiveData(false);
@@ -89,41 +117,73 @@ public class TeamRepository {
         );
     }
 
-    public MutableLiveData<List<Team>> getAllTeamsFromRemote(){
-        return fetchFromRemote();
-    }
-
-    public void teamsRetrieved(List<Team> teamsList){
-        allTeams.setValue(teamsList);
-    }
-
-    public void teamRetrieved(Team team){
-        this.team.setValue(team);
+    public void updateTeam(Team team) {
+        taskRunner.executeAsync(new TeamRepository.UpdateTeamInLocalTask(teamDao, team), result -> updateTeamInRemote(team));
     }
 
 
-    public void refreshBypassCache(){
-        fetchFromRemote();
-    }
-
-    private MutableLiveData<List<Team>> fetchFromDatabase(){
-        taskRunner.executeAsync(new getAllTeamsFromLocalTask(teamDao), this::teamsRetrieved);
-        return allTeams;
-    }
-
-    private MutableLiveData<List<Team>> fetchFromRemote() {
+    public void updateTeamInRemote(Team team) {
         LoggedInUser user = preferencesHelper.getUser();
-                disposable.add(
-                apiService.getTeamsApi().getTeamsByUserId(user.token, user.userId)
+        disposable.add(
+                apiService.getTeamsApi().updateTeam(user.token, team.getTeamId(), team)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<Team>() {
+                            @Override
+                            public void onSuccess(@io.reactivex.annotations.NonNull Team teamFromRemote) {
+                                setIsUpdatedLiveData(true);
+                            }
+
+                            @Override
+                            public void onError(@NonNull Throwable e) {
+                                e.printStackTrace();
+                            }
+                        })
+        );
+    }
+
+    public void deleteTeam(Team team) {
+        LoggedInUser user = preferencesHelper.getUser();
+        disposable.add(
+                apiService.getTeamsApi().deleteTeam(user.token, team.getTeamId())
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<OperationResponseModel>() {
+                            @Override
+                            public void onSuccess(@NonNull OperationResponseModel operationResponseModel) {
+                                setIsDeletedLiveData(true);
+                                taskRunner.executeAsync(new TeamRepository.DeleteTeamInLocalTask(teamDao, team), (data) -> {
+                                });
+                            }
+
+                            @Override
+                            public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                                setIsDeletedLiveData(false);
+                                e.printStackTrace();
+                            }
+                        })
+        );
+    }
+
+    public void getMyTeamsFromLocal() {
+        taskRunner.executeAsync(new GetMyTeamsFromLocalTask(teamDao), this::myTeamsRetrieved);
+    }
+
+    public MutableLiveData<List<Team>> getAllTeamsFromRemote() {
+        LoggedInUser user = preferencesHelper.getUser();
+        disposable.add(
+                apiService.getTeamsApi().getAllTeams(user.token, 0, 50)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<List<Team>>() {
                             @Override
                             public void onSuccess(@io.reactivex.annotations.NonNull List<Team> teamsList) {
-                                taskRunner.executeAsync(new InsertTeamsByUserIdFromRemoteToLocalTask(teamDao, teamsList), (data) ->{
-                                    teamsRetrieved(data);
+                                taskRunner.executeAsync(new InsertAllTeamsFromRemoteToLocalTask(teamDao, user.userId, teamsList), (data) -> {
+                                    allTeamsRetrieved(data);
+                                    getMyTeamsFromLocal();
                                     preferencesHelper.saveUpdateTime(System.nanoTime());
                                 });
+
                             }
 
                             @Override
@@ -133,18 +193,41 @@ public class TeamRepository {
                         })
         );
         return allTeams;
-
     }
 
-    private static class InsertTeamsByUserIdFromRemoteToLocalTask implements Callable<List<Team>> {
+    public void myTeamsRetrieved(List<Team> teamsList) {
+        myTeams.setValue(teamsList);
+    }
+
+    public void allTeamsRetrieved(List<Team> teamsList) {
+        allTeams.setValue(teamsList);
+    }
+
+    public void teamRetrieved(Team team) {
+        this.team.setValue(team);
+    }
+
+
+    public void refreshBypassCache() {
+        getAllTeamsFromRemote();
+    }
+
+    private MutableLiveData<List<Team>> fetchFromDatabase() {
+        taskRunner.executeAsync(new GetAllTeamsFromLocalTask(teamDao), this::myTeamsRetrieved);
+        return myTeams;
+    }
+
+    private static class InsertAllTeamsFromRemoteToLocalTask implements Callable<List<Team>> {
 
         private final List<Team>[] lists;
         private final TeamDao teamDao;
+        private final String userId;
 
         @SafeVarargs
-        private InsertTeamsByUserIdFromRemoteToLocalTask(TeamDao teamDao, List<Team>... lists) {
+        private InsertAllTeamsFromRemoteToLocalTask(TeamDao teamDao, String userId, List<Team>... lists) {
             this.teamDao = teamDao;
             this.lists = lists;
+            this.userId = userId;
         }
 
         @Override
@@ -152,11 +235,25 @@ public class TeamRepository {
             List<Team> list = lists[0];
             teamDao.deleteAllTeams();
 
+
             ArrayList<Team> newList = new ArrayList<>(list);
+
+
+            for (Team team : newList) {
+                team.setMyTeam(false);
+                if (team.getUsers() != null) {
+                    for (User user : team.getUsers()) {
+                        if (user.userId.equals(this.userId)) {
+                            team.setMyTeam(true);
+                            break;
+                        }
+                    }
+                }
+            }
             List<Long> result = teamDao.insertAll(newList.toArray(new Team[0]));
 
-            int i=0;
-            while (i<list.size()) {
+            int i = 0;
+            while (i < list.size()) {
                 list.get(i).setId(result.get(i).intValue());
                 ++i;
             }
@@ -165,9 +262,10 @@ public class TeamRepository {
         }
     }
 
-    private static class getAllTeamsFromLocalTask implements Callable<List<Team>>{
+    private static class GetAllTeamsFromLocalTask implements Callable<List<Team>> {
         private final TeamDao teamDao;
-        public getAllTeamsFromLocalTask(TeamDao teamDao){
+
+        public GetAllTeamsFromLocalTask(TeamDao teamDao) {
             this.teamDao = teamDao;
         }
 
@@ -177,12 +275,27 @@ public class TeamRepository {
         }
     }
 
-    private static class getTeamByTeamId implements Callable<Team> {
+
+
+    private static class GetMyTeamsFromLocalTask implements Callable<List<Team>> {
+        private final TeamDao teamDao;
+
+        public GetMyTeamsFromLocalTask(TeamDao teamDao) {
+            this.teamDao = teamDao;
+        }
+
+        @Override
+        public List<Team> call() {
+            return teamDao.getMyTeams();
+        }
+    }
+
+
+    private static class GetTeamByTeamId implements Callable<Team> {
         private final String teamId;
         private final TeamDao teamDao;
 
-        public getTeamByTeamId(TeamDao teamDao, String teamId)
-        {
+        public GetTeamByTeamId(TeamDao teamDao, String teamId) {
             this.teamDao = teamDao;
             this.teamId = teamId;
         }
@@ -193,8 +306,35 @@ public class TeamRepository {
         }
     }
 
+    private static class UpdateTeamInLocalTask implements Callable<Void> {
+        private final TeamDao teamDao;
+        private final Team team;
 
+        public UpdateTeamInLocalTask(TeamDao teamDao, Team team) {
+            this.teamDao = teamDao;
+            this.team = team;
+        }
 
+        @Override
+        public Void call() {
+            return teamDao.update(team);
+        }
+    }
+
+    private static class DeleteTeamInLocalTask implements Callable<Void> {
+        private final TeamDao teamDao;
+        private final Team team;
+
+        public DeleteTeamInLocalTask(TeamDao teamDao, Team team) {
+            this.teamDao = teamDao;
+            this.team = team;
+        }
+
+        @Override
+        public Void call() {
+            return teamDao.delete(team);
+        }
+    }
 
 
 }

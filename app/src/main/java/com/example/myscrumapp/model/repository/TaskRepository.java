@@ -4,9 +4,11 @@ import android.app.Application;
 import androidx.lifecycle.MutableLiveData;
 import com.example.myscrumapp.model.entity.LoggedInUser;
 import com.example.myscrumapp.model.entity.Task;
+import com.example.myscrumapp.model.entity.Team;
 import com.example.myscrumapp.model.network.ApiService;
 import com.example.myscrumapp.model.network.OperationResponseModel;
 import com.example.myscrumapp.model.room.dao.TaskDao;
+import com.example.myscrumapp.model.room.dao.TeamDao;
 import com.example.myscrumapp.model.room.db.MyDatabase;
 import com.example.myscrumapp.utils.GlobalConstants;
 import com.example.myscrumapp.utils.SharedPreferencesHelper;
@@ -85,7 +87,7 @@ public class TaskRepository {
         return task;
     }
 
-    public void update(Task task){
+    public void updateTask(Task task){
         taskRunner.executeAsync(new UpdateTaskInLocalTask(taskDao, task), result -> updateInRemote(task));
     }
 
@@ -389,9 +391,6 @@ public class TaskRepository {
             return taskDao.delete(task);
         }
     }
-
-
-
 
 
 }

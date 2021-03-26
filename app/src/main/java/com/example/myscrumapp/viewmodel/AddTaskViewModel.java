@@ -8,7 +8,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.model.entity.Team;
-import com.example.myscrumapp.model.entity.TeamToCreate;
 import com.example.myscrumapp.model.entity.User;
 import com.example.myscrumapp.model.repository.TaskRepository;
 import com.example.myscrumapp.model.repository.TeamRepository;
@@ -46,7 +45,7 @@ public class AddTaskViewModel extends AndroidViewModel {
     }
 
     public void updateTask(Task task){
-        taskRepository.update(task);
+        taskRepository.updateTask(task);
     }
 
     public void deleteTask(Task task){

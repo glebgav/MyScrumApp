@@ -20,7 +20,7 @@ public class TeamListViewModel extends AndroidViewModel {
     public TeamListViewModel(@NonNull Application application) {
         super(application);
         teamRepository = new TeamRepository(application);
-        teams = teamRepository.getAllTeams();
+        teams = teamRepository.getMyTeams();
 
     }
     public  MutableLiveData<Boolean> getTeamLoadError(){

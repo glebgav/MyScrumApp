@@ -38,7 +38,7 @@ public class TaskListViewModel extends AndroidViewModel {
     }
 
     public void update(Task task){
-        taskRepository.update(task);
+        taskRepository.updateTask(task);
     }
 
     public void filterTeamTasksByStatus(String teamId, int status){
