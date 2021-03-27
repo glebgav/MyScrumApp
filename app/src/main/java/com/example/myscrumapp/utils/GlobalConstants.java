@@ -8,4 +8,5 @@ public class GlobalConstants {
     public static final int DONE_STATUS = 2;
     public static final int INVALID_STATUS = -1;
     public static final String NON_EXISTENT_ID = "NONE";
+    public static final String FAKE_PASSWORD = "FAKE_PASSWORD";
 }

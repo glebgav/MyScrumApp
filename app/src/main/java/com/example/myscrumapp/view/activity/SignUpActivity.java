@@ -89,7 +89,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             return;
         }
         /*Do user registration*/
-        UserRegisterDetails userRegisterDetails = new UserRegisterDetails(firstName, lastName,password,email, true,null,null);
+        UserRegisterDetails userRegisterDetails = new UserRegisterDetails(null, firstName, lastName,password,email, true,null,null);
         loadingProgressBar.setVisibility(View.VISIBLE);
         Call<UserRegisterDetails> call = ApiService.getInstance()
                 .getUsersApi()

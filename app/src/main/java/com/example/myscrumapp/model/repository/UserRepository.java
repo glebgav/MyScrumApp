@@ -11,6 +11,9 @@ import com.example.myscrumapp.model.entity.Team;
 import com.example.myscrumapp.model.entity.User;
 import com.example.myscrumapp.model.entity.UserRegisterDetails;
 import com.example.myscrumapp.model.network.ApiService;
+import com.example.myscrumapp.model.network.OperationResponseModel;
+import com.example.myscrumapp.model.network.OperationResponseStatus;
+import com.example.myscrumapp.model.network.UsersApi;
 import com.example.myscrumapp.model.room.dao.TaskDao;
 import com.example.myscrumapp.model.room.db.MyDatabase;
 import com.example.myscrumapp.utils.SharedPreferencesHelper;
@@ -31,26 +34,17 @@ import retrofit2.Response;
 
 public class UserRepository {
     private final ApiService apiService;
-    private final TaskDao taskDao;
     private final MutableLiveData<Boolean> userIsCreated = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> userIsUpdated = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> userIsDeleted = new MutableLiveData<>();
     private final MutableLiveData<List<User>> allUsers = new MutableLiveData<>();
-    private final TaskRunner taskRunner = new TaskRunner();
+    private final MutableLiveData<List<UserRegisterDetails>> allUsersWithTeamsAndTasks = new MutableLiveData<>();
     private final SharedPreferencesHelper preferencesHelper;
     private final CompositeDisposable disposable = new CompositeDisposable();
 
     public UserRepository(Application application) {
-        MyDatabase database = MyDatabase.getInstance(application);
         preferencesHelper = SharedPreferencesHelper.getInstance(application);
         apiService = ApiService.getInstance();
-        taskDao = database.taskDao();
-    }
-
-    public void setIsCreatedLiveData(Boolean value) {
-        userIsCreated.setValue(value);
-    }
-
-    public MutableLiveData<Boolean> getIsCreatedLiveData() {
-        return userIsCreated;
     }
 
     public void addUser(UserRegisterDetails user) {
@@ -72,17 +66,65 @@ public class UserRepository {
         });
     }
 
-/*    public MutableLiveData<List<User>> getAllUsers(){
-        taskRunner.executeAsync(new UserRepository.GetAllUsersFromLocalTask(taskDao), this::usersRetrieved);
-        return allUsers;
-    }*/
+    public void deleteUser(UserRegisterDetails userToDelete){
+        LoggedInUser myUser = preferencesHelper.getUser();
+        disposable.add(
+                apiService.getUsersApi().deleteUser(myUser.token, userToDelete.userId)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<OperationResponseModel>() {
+                            @Override
+                            public void onSuccess(@io.reactivex.annotations.NonNull OperationResponseModel operationResponseModel) {
+                                setIsDeletedLiveData(operationResponseModel.getOperationResult().equals(OperationResponseStatus.SUCCESS.name()));
+                            }
+
+                            @Override
+                            public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                                setIsDeletedLiveData(false);
+                                e.printStackTrace();
+                            }
+                        })
+        );
+    }
+
+
+    public void updateUser(UserRegisterDetails userToUpdate){
+        LoggedInUser myUser = preferencesHelper.getUser();
+        disposable.add(
+                apiService.getUsersApi().updateUser(myUser.token, userToUpdate.userId, userToUpdate)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<UserRegisterDetails>() {
+                            @Override
+                            public void onSuccess(@io.reactivex.annotations.NonNull UserRegisterDetails updatedUser) {
+                                setIsUpdatedLiveData(true);
+                            }
+
+                            @Override
+                            public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                                setIsUpdatedLiveData(false);
+                                e.printStackTrace();
+                            }
+                        })
+        );
+    }
+
+
 
     public MutableLiveData<List<User>> getAllUsers() {
         return fetchAllFromRemote();
     }
 
+    public MutableLiveData<List<UserRegisterDetails>> getAllUsersWithTeamsAndTasks() {
+        return fetchAllFromRemoteWithTeamsAndTasks();
+    }
+
     private void usersRetrieved(List<User> users) {
         allUsers.setValue(users);
+    }
+
+    private void usersWithTeamsAndTaskRetrieved(List<UserRegisterDetails> users) {
+        allUsersWithTeamsAndTasks.setValue(users);
     }
 
     private MutableLiveData<List<User>> fetchAllFromRemote() {
@@ -108,23 +150,53 @@ public class UserRepository {
 
     }
 
+    private MutableLiveData<List<UserRegisterDetails>> fetchAllFromRemoteWithTeamsAndTasks() {
+        LoggedInUser user = preferencesHelper.getUser();
+        disposable.add(
+                apiService.getUsersApi().getAllUsersWithTeamsAndTasks(user.token, 0, 50)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<List<UserRegisterDetails>>() {
 
-    private static class GetAllUsersFromLocalTask implements Callable<List<User>> {
-        private final TaskDao taskDao;
+                            @Override
+                            public void onSuccess(@io.reactivex.annotations.NonNull List<UserRegisterDetails> users) {
+                                usersWithTeamsAndTaskRetrieved(users);
+                            }
 
-        public GetAllUsersFromLocalTask(TaskDao taskDao) {
-            this.taskDao = taskDao;
-        }
+                            @Override
+                            public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                                e.printStackTrace();
+                            }
+                        })
+        );
+        return allUsersWithTeamsAndTasks;
 
-        @Override
-        public List<User> call() {
-            List<User> users = new ArrayList<>();
-            for (Task task : taskDao.getAllTasks()) {
-                users.add(task.getUserDetails());
-            }
-            return users;
-        }
     }
+
+    public void setIsCreatedLiveData(Boolean value) {
+        userIsCreated.setValue(value);
+    }
+
+    public MutableLiveData<Boolean> getIsCreatedLiveData() {
+        return userIsCreated;
+    }
+
+    public void setIsUpdatedLiveData(Boolean value) {
+        userIsUpdated.setValue(value);
+    }
+
+    public MutableLiveData<Boolean> getIsUpdatedLiveData() {
+        return userIsUpdated;
+    }
+
+    public void setIsDeletedLiveData(Boolean value) {
+        userIsDeleted.setValue(value);
+    }
+
+    public MutableLiveData<Boolean> getIsDeletedLiveData() {
+        return userIsDeleted;
+    }
+
 
 
 }

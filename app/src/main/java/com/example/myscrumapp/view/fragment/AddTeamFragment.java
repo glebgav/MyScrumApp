@@ -33,7 +33,6 @@ public class AddTeamFragment extends Fragment {
     private FragmentAddTeamBinding binding;
     private AddTeamViewModel viewModel;
     private ArrayAdapter<Item> adapter;
-    private final SharedPreferencesHelper preferencesHelper = SharedPreferencesHelper.getInstance(getContext());
 
     public AddTeamFragment() {
         // Required empty public constructor
@@ -166,6 +165,7 @@ public class AddTeamFragment extends Fragment {
             if (created != null) {
                 setToTeamView();
                 if (created) {
+                    viewModel.refreshTeams();
                     Snackbar.make(view, "Team Created Successfully", Snackbar.LENGTH_LONG).show();
                 }
                 if (!created) {
@@ -179,6 +179,7 @@ public class AddTeamFragment extends Fragment {
             if (deleted != null) {
                 setToTeamView();
                 if (deleted) {
+                    viewModel.refreshTeams();
                     Snackbar.make(view, "Team Deleted Successfully", Snackbar.LENGTH_LONG).show();
                 }
                 if (!deleted) {
@@ -192,6 +193,7 @@ public class AddTeamFragment extends Fragment {
             if (updated != null) {
                 setToTeamView();
                 if (updated) {
+                    viewModel.refreshTeams();
                     Snackbar.make(view, "Team Updated Successfully", Snackbar.LENGTH_LONG).show();
                 }
                 if (!updated) {

@@ -40,6 +40,10 @@ public class AddTeamViewModel extends AndroidViewModel {
         teamDeleted = teamRepository.getIsDeletedLiveData();
     }
 
+    public void refreshTeams(){
+        teamRepository.getAllTeamsFromRemote();
+    }
+
     public void addTeam(Team team){
         teamRepository.addTeamInRemote(team);
     }
