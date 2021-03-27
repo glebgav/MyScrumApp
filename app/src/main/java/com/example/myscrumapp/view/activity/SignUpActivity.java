@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.myscrumapp.R;
 import com.example.myscrumapp.model.entity.UserRegisterDetails;
 import com.example.myscrumapp.model.network.ApiService;
+import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.snackbar.Snackbar;
 
 import android.content.Intent;
@@ -23,6 +24,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
     private EditText editTextEmail, editTextPassword, editTextFirstName, editTextLastName;
     private ProgressBar loadingProgressBar;
+    private MaterialCheckBox isMangerCheckBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         editTextPassword = findViewById(R.id.password);
         editTextFirstName = findViewById(R.id.firstName);
         editTextLastName = findViewById(R.id.lastName);
+        isMangerCheckBox = findViewById(R.id.is_manager_checkbox);
 
         findViewById(R.id.buttonSignUp).setOnClickListener(this);
         findViewById(R.id.textViewLogin).setOnClickListener(this);
@@ -57,6 +60,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         String firstName = editTextFirstName.getText().toString().trim();
         String lastName = editTextLastName.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
+        boolean isManager = isMangerCheckBox.isChecked();
 
         if(email.isEmpty()){
             editTextEmail.setError("Enter a valid email");
@@ -89,7 +93,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             return;
         }
         /*Do user registration*/
-        UserRegisterDetails userRegisterDetails = new UserRegisterDetails(null, firstName, lastName,password,email, true,null,null);
+        UserRegisterDetails userRegisterDetails = new UserRegisterDetails(null, firstName, lastName,password,email, isManager,null,null);
         loadingProgressBar.setVisibility(View.VISIBLE);
         Call<UserRegisterDetails> call = ApiService.getInstance()
                 .getUsersApi()
