@@ -1,25 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
         <variable
             name="task"
             type="com.example.myscrumapp.model.entity.Task" />
+
     </data>
 
-    <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         tools:context=".view.fragment.TaskDetailsFragment">
+
 
         <ImageView
             android:id="@+id/taskImageTemp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:layout_margin="10dp"
             android:minHeight="200dp"
-            android:scaleType="fitCenter"
             android:src="@mipmap/ic_myscrum_icon_round">
 
         </ImageView>
@@ -27,32 +29,44 @@
         <TextView
             android:id="@+id/taskTitleDetails"
             style="@style/TaskTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/taskImageTemp"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="4dp"
+            android:layout_margin="10dp"
+            android:textAlignment="center"
             android:text="@{task.title}" />
+
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/taskDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/taskStatusDetails"
+                android:padding="15dp"
+                style="@style/TaskDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/unknown" />
+
+            <TextView
+                android:id="@+id/taskTeamDetails"
+                android:padding="15dp"
+                style="@style/TaskDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{`Team: ` + task.teamDetails.name}" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
         <TextView
             android:id="@+id/taskDescriptionDetails"
-            style="@style/TaskDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/taskStatusDetails"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="4dp"
+            android:padding="5dp"
+            style="@style/TaskDescriptionDetails"
+            android:layout_width="match_parent"
+            android:layout_height="430dp"
             android:text="@{task.description}" />
 
-        <TextView
-            android:id="@+id/taskStatusDetails"
-            style="@style/TaskDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/taskTitleDetails"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="4dp"
-            android:text="@{String.valueOf(task.status)}" />
-
-    </RelativeLayout>
+    </LinearLayout>
 </layout>

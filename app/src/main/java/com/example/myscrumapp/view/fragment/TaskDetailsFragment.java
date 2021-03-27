@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.example.myscrumapp.R;
 import com.example.myscrumapp.databinding.FragmentTaskDetailBinding;
+import com.example.myscrumapp.utils.GlobalConstants;
 import com.example.myscrumapp.viewmodel.TaskDetailsViewModel;
 
 public class TaskDetailsFragment extends Fragment {
@@ -51,6 +52,9 @@ public class TaskDetailsFragment extends Fragment {
         viewModel.getTaskMutableLiveData().observe(getViewLifecycleOwner(), task -> {
             if(task != null){
                 binding.setTask(task);
+                String myStatus = "Status: "+GlobalConstants.taskStatsToTextMap.get(task.getStatus());
+                binding.taskStatusDetails.setText(myStatus);
+
             }
         });
     }
