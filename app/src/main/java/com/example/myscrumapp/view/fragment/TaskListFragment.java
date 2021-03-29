@@ -19,9 +19,12 @@ import android.widget.TextView;
 import com.example.myscrumapp.R;
 import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.utils.GlobalConstants;
+import com.example.myscrumapp.utils.SecurityManager;
 import com.example.myscrumapp.view.adapter.TaskListAdapter;
 import com.example.myscrumapp.viewmodel.TaskListViewModel;
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,6 +34,7 @@ public class TaskListFragment extends Fragment {
     private String teamId;
     private TaskListViewModel viewModel;
     private final TaskListAdapter taskListAdapter = new TaskListAdapter(new ArrayList<>());
+    private final SecurityManager securityManager = SecurityManager.getInstance(getContext());
     private AppBarLayout appBarLayout;
     private Button toDoBtn;
     private Button inProgressBtn;
@@ -108,16 +112,22 @@ public class TaskListFragment extends Fragment {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 Task task = taskListAdapter.getTaskAt(viewHolder.getAdapterPosition());
-                if(direction == ItemTouchHelper.LEFT){
-                    if(task.getStatus() > 0 )
-                        task.setStatus(task.getStatus()-1);
-                    viewModel.update(task);
+                if(securityManager.canModifyTask(task)){
+                    if(direction == ItemTouchHelper.LEFT){
+                        if(task.getStatus() > 0 )
+                            task.setStatus(task.getStatus()-1);
+                        viewModel.update(task);
+                    }
+                    else if(direction == ItemTouchHelper.RIGHT) {
+                        if (task.getStatus() < 2)
+                            task.setStatus(task.getStatus() + 1);
+                        viewModel.update(task);
+                    }
+                }else{
+                    Snackbar.make(view, "You can't change task status (no permissions)", Snackbar.LENGTH_LONG).show();
                 }
-                else if(direction == ItemTouchHelper.RIGHT) {
-                    if (task.getStatus() < 2)
-                        task.setStatus(task.getStatus() + 1);
-                    viewModel.update(task);
-                }
+
+
             }
         };
 
