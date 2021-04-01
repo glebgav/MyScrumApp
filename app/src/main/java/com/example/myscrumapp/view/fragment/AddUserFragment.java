@@ -23,6 +23,7 @@ import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.model.entity.Team;
 import com.example.myscrumapp.model.entity.User;
 import com.example.myscrumapp.model.entity.UserRegisterDetails;
+import com.example.myscrumapp.model.network.OperationResponseStatus;
 import com.example.myscrumapp.utils.GlobalConstants;
 import com.example.myscrumapp.view.shared.MultiSelectionSpinner;
 import com.example.myscrumapp.viewmodel.AddUserViewModel;
@@ -175,12 +176,12 @@ public class AddUserFragment extends Fragment {
         viewModel.getIsUserCreated().observe(getViewLifecycleOwner(), created -> {
             if(created != null){
                 setToTeamView();
-                if(created){
+                if(created.getOperationResult().equals(OperationResponseStatus.SUCCESS.name())){
                     viewModel.refreshUsers();
                     Snackbar.make(view, "User Created Successfully", Snackbar.LENGTH_LONG).show();
                 }
-                if(!created){
-                    Snackbar.make(view, "Error Creating the User", Snackbar.LENGTH_LONG).show();
+                if(created.getOperationResult().equals(OperationResponseStatus.ERROR.name())){
+                    Snackbar.make(view, created.getResponseMessage(), Snackbar.LENGTH_LONG).show();
                 }
             }
 
@@ -189,12 +190,12 @@ public class AddUserFragment extends Fragment {
         viewModel.getIsUserUpdated().observe(getViewLifecycleOwner(), updated -> {
             if (updated != null) {
                 setToTeamView();
-                if (updated) {
+                if (updated.getOperationResult().equals(OperationResponseStatus.SUCCESS.name())) {
                     viewModel.refreshUsers();
                     Snackbar.make(view, "User Updated Successfully", Snackbar.LENGTH_LONG).show();
                 }
-                if (!updated) {
-                    Snackbar.make(view, "Error Updating the Team", Snackbar.LENGTH_LONG).show();
+                if (updated.getOperationResult().equals(OperationResponseStatus.ERROR.name())) {
+                    Snackbar.make(view, updated.getResponseMessage(), Snackbar.LENGTH_LONG).show();
                 }
             }
 
@@ -203,12 +204,12 @@ public class AddUserFragment extends Fragment {
         viewModel.getIsUserDeleted().observe(getViewLifecycleOwner(), deleted -> {
             if (deleted != null) {
                 setToTeamView();
-                if (deleted) {
+                if (deleted.getOperationResult().equals(OperationResponseStatus.SUCCESS.name())) {
                     viewModel.refreshUsers();
                     Snackbar.make(view, "User Deleted Successfully", Snackbar.LENGTH_LONG).show();
                 }
-                if (!deleted) {
-                    Snackbar.make(view, "Error Deleting the User", Snackbar.LENGTH_LONG).show();
+                if (deleted.getOperationResult().equals(OperationResponseStatus.ERROR.name())) {
+                    Snackbar.make(view, deleted.getResponseMessage(), Snackbar.LENGTH_LONG).show();
                 }
             }
 

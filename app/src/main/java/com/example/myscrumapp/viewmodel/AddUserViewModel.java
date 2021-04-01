@@ -10,6 +10,7 @@ import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.model.entity.Team;
 import com.example.myscrumapp.model.entity.User;
 import com.example.myscrumapp.model.entity.UserRegisterDetails;
+import com.example.myscrumapp.model.network.OperationResponseModel;
 import com.example.myscrumapp.model.repository.TaskRepository;
 import com.example.myscrumapp.model.repository.TeamRepository;
 import com.example.myscrumapp.model.repository.UserRepository;
@@ -17,9 +18,9 @@ import com.example.myscrumapp.model.repository.UserRepository;
 import java.util.List;
 
 public class AddUserViewModel extends AndroidViewModel {
-    private final MutableLiveData<Boolean> userCreated;
-    private final MutableLiveData<Boolean> userDeleted;
-    private final MutableLiveData<Boolean> userUpdated;
+    private final MutableLiveData<OperationResponseModel> userCreated;
+    private final MutableLiveData<OperationResponseModel> userDeleted;
+    private final MutableLiveData<OperationResponseModel> userUpdated;
     private final MutableLiveData<List<Team>> teams;
     private final MutableLiveData<List<UserRegisterDetails>> users;
     private final MutableLiveData<List<Task>> tasks;
@@ -57,15 +58,15 @@ public class AddUserViewModel extends AndroidViewModel {
         userRepository.updateUser(user);
     }
 
-    public  MutableLiveData<Boolean> getIsUserCreated(){
+    public  MutableLiveData<OperationResponseModel> getIsUserCreated(){
         return userCreated;
     }
 
-    public  MutableLiveData<Boolean> getIsUserDeleted(){
+    public  MutableLiveData<OperationResponseModel> getIsUserDeleted(){
         return userDeleted;
     }
 
-    public  MutableLiveData<Boolean> getIsUserUpdated(){
+    public  MutableLiveData<OperationResponseModel> getIsUserUpdated(){
         return userUpdated;
     }
 

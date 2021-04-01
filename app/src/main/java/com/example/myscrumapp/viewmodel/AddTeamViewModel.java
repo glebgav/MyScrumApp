@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.model.entity.Team;
 import com.example.myscrumapp.model.entity.User;
+import com.example.myscrumapp.model.network.OperationResponseModel;
 import com.example.myscrumapp.model.repository.TaskRepository;
 import com.example.myscrumapp.model.repository.TeamRepository;
 import com.example.myscrumapp.model.repository.UserRepository;
@@ -16,9 +17,9 @@ import com.example.myscrumapp.model.repository.UserRepository;
 import java.util.List;
 
 public class AddTeamViewModel extends AndroidViewModel {
-    private final MutableLiveData<Boolean> teamCreated;
-    private final MutableLiveData<Boolean> teamDeleted;
-    private final MutableLiveData<Boolean> teamUpdated;
+    private final MutableLiveData<OperationResponseModel> teamCreated;
+    private final MutableLiveData<OperationResponseModel> teamDeleted;
+    private final MutableLiveData<OperationResponseModel> teamUpdated;
     private final MutableLiveData<List<Team>> teams;
     private final MutableLiveData<List<User>> users;
     private final MutableLiveData<List<Task>> tasks;
@@ -56,15 +57,15 @@ public class AddTeamViewModel extends AndroidViewModel {
         teamRepository.deleteTeam(team);
     }
 
-    public  MutableLiveData<Boolean> getIsTeamCreated(){
+    public  MutableLiveData<OperationResponseModel> getIsTeamCreated(){
         return teamCreated;
     }
 
-    public  MutableLiveData<Boolean> getIsTeamDeleted(){
+    public  MutableLiveData<OperationResponseModel> getIsTeamDeleted(){
         return teamDeleted;
     }
 
-    public  MutableLiveData<Boolean> getIsTeamUpdated(){
+    public  MutableLiveData<OperationResponseModel> getIsTeamUpdated(){
         return teamUpdated;
     }
 

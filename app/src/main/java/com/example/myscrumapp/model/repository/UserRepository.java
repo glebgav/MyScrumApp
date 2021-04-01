@@ -34,9 +34,9 @@ import retrofit2.Response;
 
 public class UserRepository {
     private final ApiService apiService;
-    private final MutableLiveData<Boolean> userIsCreated = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> userIsUpdated = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> userIsDeleted = new MutableLiveData<>();
+    private final MutableLiveData<OperationResponseModel> userIsCreated = new MutableLiveData<>();
+    private final MutableLiveData<OperationResponseModel> userIsUpdated = new MutableLiveData<>();
+    private final MutableLiveData<OperationResponseModel> userIsDeleted = new MutableLiveData<>();
     private final MutableLiveData<List<User>> allUsers = new MutableLiveData<>();
     private final MutableLiveData<List<UserRegisterDetails>> allUsersWithTeamsAndTasks = new MutableLiveData<>();
     private final SharedPreferencesHelper preferencesHelper;
@@ -47,23 +47,23 @@ public class UserRepository {
         apiService = ApiService.getInstance();
     }
 
-    public void addUser(UserRegisterDetails user) {
-        Call<UserRegisterDetails> call = apiService
-                .getUsersApi()
-                .createUser(user);
-
-        call.enqueue(new Callback<UserRegisterDetails>() {
-            @SneakyThrows
-            @Override
-            public void onResponse(@NonNull Call<UserRegisterDetails> call, @NonNull Response<UserRegisterDetails> response) {
-                setIsCreatedLiveData(response.code() == 200);
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<UserRegisterDetails> call, @NonNull Throwable t) {
-                setIsCreatedLiveData(false);
-            }
-        });
+    public void addUser(UserRegisterDetails user){
+        disposable.add(
+                apiService.getUsersApi().createUser(user)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<UserRegisterDetails>() {
+                            @Override
+                            public void onSuccess(@io.reactivex.annotations.NonNull UserRegisterDetails createdUser) {
+                                setIsCreatedLiveData(OperationResponseModel.successfulResponse("Add"));
+                            }
+                            @Override
+                            public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                                setIsCreatedLiveData(OperationResponseModel.failedResponse("Add",e));
+                                e.printStackTrace();
+                            }
+                        })
+        );
     }
 
     public void deleteUser(UserRegisterDetails userToDelete){
@@ -75,12 +75,12 @@ public class UserRepository {
                         .subscribeWith(new DisposableSingleObserver<OperationResponseModel>() {
                             @Override
                             public void onSuccess(@io.reactivex.annotations.NonNull OperationResponseModel operationResponseModel) {
-                                setIsDeletedLiveData(operationResponseModel.getOperationResult().equals(OperationResponseStatus.SUCCESS.name()));
+                                setIsDeletedLiveData(operationResponseModel);
                             }
 
                             @Override
                             public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                                setIsDeletedLiveData(false);
+                                setIsDeletedLiveData(OperationResponseModel.failedResponse("Delete",e));
                                 e.printStackTrace();
                             }
                         })
@@ -97,12 +97,12 @@ public class UserRepository {
                         .subscribeWith(new DisposableSingleObserver<UserRegisterDetails>() {
                             @Override
                             public void onSuccess(@io.reactivex.annotations.NonNull UserRegisterDetails updatedUser) {
-                                setIsUpdatedLiveData(true);
+                                setIsUpdatedLiveData(OperationResponseModel.successfulResponse("Update"));
                             }
 
                             @Override
                             public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                                setIsUpdatedLiveData(false);
+                                setIsUpdatedLiveData(OperationResponseModel.failedResponse("Update",e));
                                 e.printStackTrace();
                             }
                         })
@@ -173,27 +173,27 @@ public class UserRepository {
 
     }
 
-    public void setIsCreatedLiveData(Boolean value) {
+    public void setIsCreatedLiveData(OperationResponseModel value) {
         userIsCreated.setValue(value);
     }
 
-    public MutableLiveData<Boolean> getIsCreatedLiveData() {
+    public MutableLiveData<OperationResponseModel> getIsCreatedLiveData() {
         return userIsCreated;
     }
 
-    public void setIsUpdatedLiveData(Boolean value) {
+    public void setIsUpdatedLiveData(OperationResponseModel value) {
         userIsUpdated.setValue(value);
     }
 
-    public MutableLiveData<Boolean> getIsUpdatedLiveData() {
+    public MutableLiveData<OperationResponseModel> getIsUpdatedLiveData() {
         return userIsUpdated;
     }
 
-    public void setIsDeletedLiveData(Boolean value) {
+    public void setIsDeletedLiveData(OperationResponseModel value) {
         userIsDeleted.setValue(value);
     }
 
-    public MutableLiveData<Boolean> getIsDeletedLiveData() {
+    public MutableLiveData<OperationResponseModel> getIsDeletedLiveData() {
         return userIsDeleted;
     }
 

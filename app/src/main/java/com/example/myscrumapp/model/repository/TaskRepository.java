@@ -6,20 +6,27 @@ import com.example.myscrumapp.model.entity.LoggedInUser;
 import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.model.network.ApiService;
 import com.example.myscrumapp.model.network.OperationResponseModel;
+import com.example.myscrumapp.model.network.OperationResponseStatus;
 import com.example.myscrumapp.model.room.dao.TaskDao;
 import com.example.myscrumapp.model.room.db.MyDatabase;
 import com.example.myscrumapp.utils.GlobalConstants;
 import com.example.myscrumapp.utils.SharedPreferencesHelper;
 import com.example.myscrumapp.utils.TaskRunner;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
+import lombok.SneakyThrows;
+import retrofit2.HttpException;
 
 public class TaskRepository {
 
@@ -28,9 +35,9 @@ public class TaskRepository {
     private final MutableLiveData<List<Task>> teamTasks  = new MutableLiveData<>();
     private final MutableLiveData<List<Task>> myTasks  = new MutableLiveData<>();
     private final MutableLiveData<Task> task = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> taskIsCreated = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> taskIsDeleted = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> taskIsUpdated = new MutableLiveData<>();
+    private final MutableLiveData<OperationResponseModel> taskIsCreated = new MutableLiveData<>();
+    private final MutableLiveData<OperationResponseModel> taskIsDeleted = new MutableLiveData<>();
+    private final MutableLiveData<OperationResponseModel> taskIsUpdated = new MutableLiveData<>();
     private final ApiService apiService;
     private final TaskRunner taskRunner = new TaskRunner();
     private final SharedPreferencesHelper preferencesHelper;
@@ -110,10 +117,12 @@ public class TaskRepository {
                         .subscribeWith(new DisposableSingleObserver<Task>() {
                             @Override
                             public void onSuccess(@NonNull Task task) {
-                                setIsUpdatedLiveData(true);
+                                setIsUpdatedLiveData(OperationResponseModel.successfulResponse("Update"));
                             }
+                            @SneakyThrows
                             @Override
                             public void onError(@NonNull Throwable e) {
+                                setIsUpdatedLiveData(OperationResponseModel.failedResponse("Update",e));
                                 e.printStackTrace();
                             }
                         })
@@ -129,11 +138,11 @@ public class TaskRepository {
                         .subscribeWith(new DisposableSingleObserver<Task>() {
                             @Override
                             public void onSuccess(@NonNull Task task) {
-                                setIsCreatedLiveData(true);
+                                setIsCreatedLiveData(OperationResponseModel.successfulResponse("Add"));
                             }
                             @Override
                             public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                                setIsCreatedLiveData(false);
+                                setIsCreatedLiveData(OperationResponseModel.failedResponse("Add",e));
                                 e.printStackTrace();
                             }
                         })
@@ -149,13 +158,13 @@ public class TaskRepository {
                         .subscribeWith(new DisposableSingleObserver<OperationResponseModel>() {
                             @Override
                             public void onSuccess(@NonNull OperationResponseModel operationResponseModel) {
-                                setIsDeletedLiveData(true);
+                                setIsDeletedLiveData(operationResponseModel);
                                 taskRunner.executeAsync(new DeleteTaskInLocalTask(taskDao, task), (data) ->{});
                             }
 
                             @Override
                             public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                                setIsDeletedLiveData(false);
+                                setIsDeletedLiveData(OperationResponseModel.failedResponse("Delete",e));
                                 e.printStackTrace();
                             }
                         })
@@ -210,27 +219,27 @@ public class TaskRepository {
         this.task.setValue(task);
     }
 
-    public void setIsCreatedLiveData(Boolean value){
+    public void setIsCreatedLiveData(OperationResponseModel value){
         taskIsCreated.setValue(value);
     }
 
-    public MutableLiveData<Boolean> getIsCreatedLiveData(){
+    public MutableLiveData<OperationResponseModel> getIsCreatedLiveData(){
         return taskIsCreated;
     }
 
-    public void setIsUpdatedLiveData(Boolean value){
+    public void setIsUpdatedLiveData(OperationResponseModel value){
         taskIsUpdated.setValue(value);
     }
 
-    public MutableLiveData<Boolean> getIsUpdatedLiveData(){
+    public MutableLiveData<OperationResponseModel> getIsUpdatedLiveData(){
         return taskIsUpdated;
     }
 
-    public void setIsDeletedLiveData(Boolean value){
+    public void setIsDeletedLiveData(OperationResponseModel value){
         taskIsDeleted.setValue(value);
     }
 
-    public MutableLiveData<Boolean> getIsDeletedLiveData(){
+    public MutableLiveData<OperationResponseModel> getIsDeletedLiveData(){
         return taskIsDeleted;
     }
 

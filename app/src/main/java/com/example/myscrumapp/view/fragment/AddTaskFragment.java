@@ -18,6 +18,7 @@ import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.model.entity.Team;
 import com.example.myscrumapp.model.entity.TeamInTask;
 import com.example.myscrumapp.model.entity.User;
+import com.example.myscrumapp.model.network.OperationResponseStatus;
 import com.example.myscrumapp.utils.GlobalConstants;
 import com.example.myscrumapp.viewmodel.AddTaskViewModel;
 import com.google.android.material.snackbar.Snackbar;
@@ -173,12 +174,12 @@ public class AddTaskFragment extends Fragment {
         viewModel.getIsTaskCreated().observe(getViewLifecycleOwner(), created -> {
             if (created != null) {
                 setToTaskView();
-                if (created) {
+                if (created.getOperationResult().equals(OperationResponseStatus.SUCCESS.name())) {
                     viewModel.refreshTasks();
                     Snackbar.make(view, "Task Created Successfully", Snackbar.LENGTH_LONG).show();
                 }
-                if (!created) {
-                    Snackbar.make(view, "Error Creating the Task", Snackbar.LENGTH_LONG).show();
+                if (created.getOperationResult().equals(OperationResponseStatus.ERROR.name())) {
+                    Snackbar.make(view, created.getResponseMessage(), Snackbar.LENGTH_LONG).show();
                 }
             }
 
@@ -187,13 +188,13 @@ public class AddTaskFragment extends Fragment {
         viewModel.getIsTaskDeleted().observe(getViewLifecycleOwner(), deleted -> {
             if (deleted != null) {
                 setToTaskView();
-                if (deleted) {
+                if (deleted.getOperationResult().equals(OperationResponseStatus.SUCCESS.name())) {
                     viewModel.refreshTasks();
                     resetView();
                     Snackbar.make(view, "Task Deleted Successfully", Snackbar.LENGTH_LONG).show();
                 }
-                if (!deleted) {
-                    Snackbar.make(view, "Error Deleting the Task", Snackbar.LENGTH_LONG).show();
+                if (deleted.getOperationResult().equals(OperationResponseStatus.ERROR.name())) {
+                    Snackbar.make(view, deleted.getResponseMessage(), Snackbar.LENGTH_LONG).show();
                 }
             }
 
@@ -202,13 +203,13 @@ public class AddTaskFragment extends Fragment {
         viewModel.getIsTaskUpdated().observe(getViewLifecycleOwner(), updated -> {
             if (updated != null) {
                 setToTaskView();
-                if (updated) {
+                if (updated.getOperationResult().equals(OperationResponseStatus.SUCCESS.name())) {
                     viewModel.refreshTasks();
                     resetView();
                     Snackbar.make(view, "Task Updated Successfully", Snackbar.LENGTH_LONG).show();
                 }
-                if (!updated) {
-                    Snackbar.make(view, "Error Updating the Task", Snackbar.LENGTH_LONG).show();
+                if (updated.getOperationResult().equals(OperationResponseStatus.ERROR.name())) {
+                    Snackbar.make(view, updated.getResponseMessage(), Snackbar.LENGTH_LONG).show();
                 }
             }
 

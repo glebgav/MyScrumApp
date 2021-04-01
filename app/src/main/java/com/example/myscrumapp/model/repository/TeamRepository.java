@@ -33,9 +33,9 @@ public class TeamRepository {
     private final MutableLiveData<List<Team>> myTeams = new MutableLiveData<>();
     private final MutableLiveData<List<Team>> allTeams = new MutableLiveData<>();
     private final MutableLiveData<Team> team = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> teamIsCreated = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> teamIsUpdated = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> teamIsDeleted = new MutableLiveData<>();
+    private final MutableLiveData<OperationResponseModel> teamIsCreated = new MutableLiveData<>();
+    private final MutableLiveData<OperationResponseModel> teamIsUpdated = new MutableLiveData<>();
+    private final MutableLiveData<OperationResponseModel> teamIsDeleted = new MutableLiveData<>();
 
     private final TaskRunner taskRunner = new TaskRunner();
     private final SharedPreferencesHelper preferencesHelper;
@@ -89,12 +89,12 @@ public class TeamRepository {
                         .subscribeWith(new DisposableSingleObserver<Team>() {
                             @Override
                             public void onSuccess(@io.reactivex.annotations.NonNull Team createdTeam) {
-                                setIsCreatedLiveData(true);
+                                setIsCreatedLiveData(OperationResponseModel.successfulResponse("Add"));
                             }
 
                             @Override
                             public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                                setIsCreatedLiveData(false);
+                                setIsCreatedLiveData(OperationResponseModel.failedResponse("Add",e));
                                 e.printStackTrace();
                             }
                         })
@@ -115,11 +115,12 @@ public class TeamRepository {
                         .subscribeWith(new DisposableSingleObserver<Team>() {
                             @Override
                             public void onSuccess(@io.reactivex.annotations.NonNull Team teamFromRemote) {
-                                setIsUpdatedLiveData(true);
+                                setIsUpdatedLiveData(OperationResponseModel.successfulResponse("Update"));
                             }
 
                             @Override
                             public void onError(@NonNull Throwable e) {
+                                setIsCreatedLiveData(OperationResponseModel.failedResponse("Update",e));
                                 e.printStackTrace();
                             }
                         })
@@ -135,14 +136,14 @@ public class TeamRepository {
                         .subscribeWith(new DisposableSingleObserver<OperationResponseModel>() {
                             @Override
                             public void onSuccess(@NonNull OperationResponseModel operationResponseModel) {
-                                setIsDeletedLiveData(true);
+                                setIsDeletedLiveData(operationResponseModel);
                                 taskRunner.executeAsync(new TeamRepository.DeleteTeamInLocalTask(teamDao, team), (data) -> {
                                 });
                             }
 
                             @Override
                             public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                                setIsDeletedLiveData(false);
+                                setIsDeletedLiveData(OperationResponseModel.failedResponse("Delete",e));
                                 e.printStackTrace();
                             }
                         })
@@ -180,27 +181,27 @@ public class TeamRepository {
     }
 
 
-    public MutableLiveData<Boolean> getIsCreatedLiveData() {
+    public MutableLiveData<OperationResponseModel> getIsCreatedLiveData() {
         return teamIsCreated;
     }
 
-    public void setIsCreatedLiveData(Boolean value) {
+    public void setIsCreatedLiveData(OperationResponseModel value) {
         teamIsCreated.setValue(value);
     }
 
-    public MutableLiveData<Boolean> getIsUpdatedLiveData() {
+    public MutableLiveData<OperationResponseModel> getIsUpdatedLiveData() {
         return teamIsUpdated;
     }
 
-    public void setIsUpdatedLiveData(Boolean value) {
+    public void setIsUpdatedLiveData(OperationResponseModel value) {
         teamIsUpdated.setValue(value);
     }
 
-    public MutableLiveData<Boolean> getIsDeletedLiveData() {
+    public MutableLiveData<OperationResponseModel> getIsDeletedLiveData() {
         return teamIsDeleted;
     }
 
-    public void setIsDeletedLiveData(Boolean value) {
+    public void setIsDeletedLiveData(OperationResponseModel value) {
         teamIsDeleted.setValue(value);
     }
 

@@ -19,9 +19,8 @@ import com.example.myscrumapp.databinding.FragmentAddTeamBinding;
 import com.example.myscrumapp.model.entity.Item;
 import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.model.entity.Team;
-import com.example.myscrumapp.model.entity.TeamToCreate;
 import com.example.myscrumapp.model.entity.User;
-import com.example.myscrumapp.utils.SharedPreferencesHelper;
+import com.example.myscrumapp.model.network.OperationResponseStatus;
 import com.example.myscrumapp.viewmodel.AddTeamViewModel;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -104,6 +103,8 @@ public class AddTeamFragment extends Fragment {
                     Item selectedItem = (Item) binding.selectTeamSpinner.getSelectedItem();
                     if (selectedItem.getObj() instanceof Team) {
                         binding.saveTeam.setClickable(false);
+                        binding.editTeam.setClickable(true);
+                        binding.deleteTeam.setClickable(true);
                         Team selectedTeam = (Team) selectedItem.getObj();
                         binding.setTeam(selectedTeam);
                         if (selectedTeam.getUsers() != null)
@@ -164,12 +165,12 @@ public class AddTeamFragment extends Fragment {
         viewModel.getIsTeamCreated().observe(getViewLifecycleOwner(), created -> {
             if (created != null) {
                 setToTeamView();
-                if (created) {
+                if (created.getOperationResult().equals(OperationResponseStatus.SUCCESS.toString())) {
                     viewModel.refreshTeams();
                     Snackbar.make(view, "Team Created Successfully", Snackbar.LENGTH_LONG).show();
                 }
-                if (!created) {
-                    Snackbar.make(view, "Error Creating the Team", Snackbar.LENGTH_LONG).show();
+                if (created.getOperationResult().equals(OperationResponseStatus.ERROR.toString())) {
+                    Snackbar.make(view, created.getResponseMessage(), Snackbar.LENGTH_LONG).show();
                 }
             }
 
@@ -178,12 +179,12 @@ public class AddTeamFragment extends Fragment {
         viewModel.getIsTeamDeleted().observe(getViewLifecycleOwner(), deleted -> {
             if (deleted != null) {
                 setToTeamView();
-                if (deleted) {
+                if (deleted.getOperationResult().equals(OperationResponseStatus.SUCCESS.toString())) {
                     viewModel.refreshTeams();
                     Snackbar.make(view, "Team Deleted Successfully", Snackbar.LENGTH_LONG).show();
                 }
-                if (!deleted) {
-                    Snackbar.make(view, "Error Deleting the Team", Snackbar.LENGTH_LONG).show();
+                if (deleted.getOperationResult().equals(OperationResponseStatus.ERROR.toString())) {
+                    Snackbar.make(view, deleted.getResponseMessage(), Snackbar.LENGTH_LONG).show();
                 }
             }
 
@@ -192,12 +193,12 @@ public class AddTeamFragment extends Fragment {
         viewModel.getIsTeamUpdated().observe(getViewLifecycleOwner(), updated -> {
             if (updated != null) {
                 setToTeamView();
-                if (updated) {
+                if (updated.getOperationResult().equals(OperationResponseStatus.SUCCESS.toString())) {
                     viewModel.refreshTeams();
                     Snackbar.make(view, "Team Updated Successfully", Snackbar.LENGTH_LONG).show();
                 }
-                if (!updated) {
-                    Snackbar.make(view, "Error Updating the Team", Snackbar.LENGTH_LONG).show();
+                if (updated.getOperationResult().equals(OperationResponseStatus.ERROR.toString())) {
+                    Snackbar.make(view, updated.getResponseMessage(), Snackbar.LENGTH_LONG).show();
                 }
             }
 
@@ -276,6 +277,8 @@ public class AddTeamFragment extends Fragment {
 
     private void resetView() {
         binding.saveTeam.setClickable(true);
+        binding.editTeam.setClickable(false);
+        binding.deleteTeam.setClickable(false);
         binding.setTeam(new Team());
         binding.selectTeamSpinner.setSelection(0);
         binding.usersInTeamListSpinner.resetSelection();

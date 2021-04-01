@@ -1,30 +1,32 @@
 package com.example.myscrumapp.view.activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import com.example.myscrumapp.R;
-import com.example.myscrumapp.model.entity.UserRegisterDetails;
-import com.example.myscrumapp.model.network.ApiService;
-import com.google.android.material.checkbox.MaterialCheckBox;
-import com.google.android.material.snackbar.Snackbar;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Toast;
-import lombok.SneakyThrows;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.myscrumapp.R;
+import com.example.myscrumapp.model.entity.UserRegisterDetails;
+import com.example.myscrumapp.model.network.ApiService;
+import com.example.myscrumapp.model.network.OperationResponseModel;
+import com.google.android.material.checkbox.MaterialCheckBox;
+import com.google.android.material.snackbar.Snackbar;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText editTextEmail, editTextPassword, editTextFirstName, editTextLastName;
     private ProgressBar loadingProgressBar;
     private MaterialCheckBox isMangerCheckBox;
+    private final CompositeDisposable disposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +46,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.buttonSignUp:
                 userSignUp(v);
                 break;
@@ -62,66 +64,60 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         String password = editTextPassword.getText().toString().trim();
         boolean isManager = isMangerCheckBox.isChecked();
 
-        if(email.isEmpty()){
+        if (email.isEmpty()) {
             editTextEmail.setError("Enter a valid email");
             editTextEmail.requestFocus();
             return;
         }
-        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             editTextEmail.setError("Enter a valid email");
             editTextEmail.requestFocus();
             return;
         }
-        if(password.isEmpty()){
+        if (password.isEmpty()) {
             editTextPassword.setError("Password required");
             editTextPassword.requestFocus();
             return;
         }
-        if(password.length() < 6){
+        if (password.length() < 6) {
             editTextPassword.setError("Password should be at least 6 characters long");
             editTextPassword.requestFocus();
             return;
         }
-        if(firstName.isEmpty()){
+        if (firstName.isEmpty()) {
             editTextFirstName.setError("First name required");
             editTextFirstName.requestFocus();
             return;
         }
-        if(lastName.isEmpty()){
+        if (lastName.isEmpty()) {
             editTextLastName.setError("Last name required");
             editTextLastName.requestFocus();
             return;
         }
         /*Do user registration*/
-        UserRegisterDetails userRegisterDetails = new UserRegisterDetails(null, firstName, lastName,password,email, isManager,null,null);
+        UserRegisterDetails userRegisterDetails = new UserRegisterDetails(null, firstName, lastName, password, email, isManager, null, null);
         loadingProgressBar.setVisibility(View.VISIBLE);
-        Call<UserRegisterDetails> call = ApiService.getInstance()
-                .getUsersApi()
-                .createUser(userRegisterDetails);
 
-        call.enqueue(new Callback<UserRegisterDetails>() {
-            @SneakyThrows
-            @Override
-            public void onResponse(@NonNull Call<UserRegisterDetails> call, @NonNull Response<UserRegisterDetails> response) {
+        disposable.add(
+                ApiService.getInstance().getUsersApi().createUser(userRegisterDetails)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<UserRegisterDetails>() {
+                            @Override
+                            public void onSuccess(@io.reactivex.annotations.NonNull UserRegisterDetails createdUser) {
+                                Snackbar.make(v, "User Created Successfully", Snackbar.LENGTH_LONG).show();
+                                loadingProgressBar.setVisibility(View.GONE);
+                            }
 
-                if(response.code() == 200){
-                    Snackbar.make(v, "User Created Successfully", Snackbar.LENGTH_LONG).show();
-                }else{
-                    Snackbar.make(v, "Error  while creating the user ", Snackbar.LENGTH_LONG).show();
-                }
-                loadingProgressBar.setVisibility(View.GONE);
-
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<UserRegisterDetails> call, @NonNull Throwable t) {
-                Toast.makeText(SignUpActivity.this,t.getMessage(),Toast.LENGTH_SHORT).show();
-                loadingProgressBar.setVisibility(View.GONE);
-            }
-
-        });
+                            @Override
+                            public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                                Snackbar.make(v, OperationResponseModel.failedResponse("Add",e).getResponseMessage(), Snackbar.LENGTH_LONG).show();
+                                e.printStackTrace();
+                                loadingProgressBar.setVisibility(View.GONE);
+                            }
+                        })
+        );
 
     }
-
 
 }
