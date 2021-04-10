@@ -2,7 +2,9 @@ package com.example.myscrumapp.utils;
 
 import java.util.HashMap;
 import java.util.HashSet;
-
+/**
+ *  All global constants of the app
+ */
 public class GlobalConstants {
     public static final Long REFRESH_TIME = 5*60*100*1000*1000L;
     public static final String MY_TASKS_FRAGMENT_INDICATOR = "MyTasks";
@@ -13,6 +15,10 @@ public class GlobalConstants {
     public static final String NON_EXISTENT_ID = "NONE";
     public static final String FAKE_PASSWORD = "FAKE_PASSWORD";
 
+
+    /**
+     *  hash map of status(Integer) -> status(String)
+     */
     public static final HashMap<Integer, String> taskStatsToTextMap = new HashMap<>();
     static {
         taskStatsToTextMap.put(TODO_STATUS, "To-Do");

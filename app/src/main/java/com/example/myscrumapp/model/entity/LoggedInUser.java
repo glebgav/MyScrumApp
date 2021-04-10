@@ -1,5 +1,8 @@
 package com.example.myscrumapp.model.entity;
 
+/**
+ * Model for logged in user details that are stored in shared preferences with SharedPreferencesHelper class
+ */
 public class LoggedInUser {
     public String firstName;
     public String userId;

@@ -8,7 +8,9 @@ import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.model.repository.TaskRepository;
 import lombok.Getter;
 
-
+/**
+ *  ViewModel for task details
+ */
 @Getter
 public class TaskDetailsViewModel extends AndroidViewModel {
     private MutableLiveData<Task> taskMutableLiveData;

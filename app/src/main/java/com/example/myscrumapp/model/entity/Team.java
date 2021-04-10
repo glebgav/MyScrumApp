@@ -8,7 +8,9 @@ import androidx.room.PrimaryKey;
 import java.util.ArrayList;
 
 import lombok.NoArgsConstructor;
-
+/**
+ * Model for team in local Room Db
+ */
 @NoArgsConstructor
 @Entity(tableName = "teams")
 public class Team {

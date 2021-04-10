@@ -4,6 +4,10 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * Class for instantiating the retrofit networking library and underling http client
+ * and a single source for all network APIs
+ */
 public class ApiService {
     private static final String BASE_URL = "http://192.168.1.6:8080";
 

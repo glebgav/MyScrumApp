@@ -15,7 +15,9 @@ import com.example.myscrumapp.view.fragment.TeamListFragmentDirections;
 import com.example.myscrumapp.view.listener.TaskListListener;
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ *  Adapter for Team List
+ */
 public class TeamListAdapter extends RecyclerView.Adapter<TeamListAdapter.TeamViewHolder> implements TaskListListener {
 
     private final ArrayList<Team> teamsList;

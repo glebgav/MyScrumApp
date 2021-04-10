@@ -17,7 +17,9 @@ import com.example.myscrumapp.utils.GlobalConstants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
+/**
+ *  Custom implementation for an  AppCompatSpinner as a multi selection spinner
+ */
 public class MultiSelectionSpinner extends AppCompatSpinner implements
         DialogInterface.OnMultiChoiceClickListener {
 

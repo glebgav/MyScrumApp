@@ -13,6 +13,9 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
+/**
+ *network api interface for tasks
+ */
 public interface TasksApi {
     @GET("tasks")
     Single<List<Task>> getAllTasks(@Header("authorization") String token, @Query("page")int page, @Query("limit") int limit);

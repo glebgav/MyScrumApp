@@ -14,7 +14,9 @@ import com.example.myscrumapp.model.entity.LoggedInUser;
 import com.example.myscrumapp.utils.SharedPreferencesHelper;
 import butterknife.ButterKnife;
 
-
+/**
+ *  home Fragment
+ */
 public class HomeFragment extends Fragment {
 
     public HomeFragment() {

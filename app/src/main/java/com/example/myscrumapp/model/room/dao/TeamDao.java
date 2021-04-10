@@ -9,7 +9,9 @@ import androidx.room.Update;
 import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.model.entity.Team;
 import java.util.List;
-
+/**
+ * data access object for teams
+ */
 @Dao
 public interface TeamDao {
     @Insert

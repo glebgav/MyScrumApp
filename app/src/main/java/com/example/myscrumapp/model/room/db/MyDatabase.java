@@ -10,7 +10,9 @@ import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.model.entity.Team;
 import com.example.myscrumapp.model.room.dao.TaskDao;
 import com.example.myscrumapp.model.room.dao.TeamDao;
-
+/**
+ * database ORM declaration class
+ */
 @Database(entities = {Task.class, Team.class}, version = 1)
 public abstract class MyDatabase extends RoomDatabase {
     private static MyDatabase instance = null;

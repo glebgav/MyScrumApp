@@ -4,7 +4,9 @@ package com.example.myscrumapp.model.entity;
 import java.util.ArrayList;
 
 import lombok.NoArgsConstructor;
-
+/**
+ * Model for user registration details (used in SignUpActivity and AddUserFragment)
+ */
 @NoArgsConstructor
 public class UserRegisterDetails {
     public String userId;

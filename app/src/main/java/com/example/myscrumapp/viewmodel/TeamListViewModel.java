@@ -8,7 +8,9 @@ import com.example.myscrumapp.model.entity.Team;
 import com.example.myscrumapp.model.repository.TeamRepository;
 import java.util.List;
 import lombok.Getter;
-
+/**
+ *  ViewModel for teams list
+ */
 @Getter
 public class TeamListViewModel extends AndroidViewModel {
 

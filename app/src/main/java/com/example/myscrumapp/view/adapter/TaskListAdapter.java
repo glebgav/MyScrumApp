@@ -15,7 +15,9 @@ import com.example.myscrumapp.view.fragment.TaskListFragmentDirections;
 import com.example.myscrumapp.view.listener.TaskDetailsListener;
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ *  Adapter for Task List
+ */
 public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskViewHolder> implements TaskDetailsListener {
 
     private final ArrayList<Task> tasksList;

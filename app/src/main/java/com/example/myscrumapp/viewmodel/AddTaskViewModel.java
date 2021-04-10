@@ -15,7 +15,9 @@ import com.example.myscrumapp.model.repository.TeamRepository;
 import com.example.myscrumapp.model.repository.UserRepository;
 
 import java.util.List;
-
+/**
+ *  ViewModel for managing tasks as a Manager
+ */
 public class AddTaskViewModel extends AndroidViewModel {
     private final MutableLiveData<OperationResponseModel> taskCreated;
     private final MutableLiveData<OperationResponseModel> taskDeleted;

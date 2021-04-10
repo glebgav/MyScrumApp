@@ -27,7 +27,9 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
+/**
+ *  Fragment for managing teams as a Manager
+ */
 public class AddTeamFragment extends Fragment {
     private FragmentAddTeamBinding binding;
     private AddTeamViewModel viewModel;

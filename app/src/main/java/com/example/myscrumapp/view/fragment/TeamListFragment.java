@@ -21,7 +21,9 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-
+/**
+ *  Fragment for teams list
+ */
 public class TeamListFragment extends Fragment {
     private TeamListViewModel viewModel;
     private final TeamListAdapter teamListAdapter = new TeamListAdapter(new ArrayList<>());

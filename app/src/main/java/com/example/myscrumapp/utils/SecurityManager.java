@@ -4,7 +4,9 @@ import android.content.Context;
 
 import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.model.entity.User;
-
+/**
+ *  Security manager for the app
+ */
 public class SecurityManager {
     private static SecurityManager instance;
     private final SharedPreferencesHelper preferences;
@@ -19,10 +21,17 @@ public class SecurityManager {
         return instance;
     }
 
+    /**
+     * @return if current logged in user is manager
+     */
     public boolean isManager(){
         return preferences.getUser().isManager;
     }
 
+    /**
+     * @param task task to modify
+     * @return if current user can modify this task
+     */
     public  boolean canModifyTask(Task task){
         User taskUser = task.getUserDetails();
         if(taskUser != null)

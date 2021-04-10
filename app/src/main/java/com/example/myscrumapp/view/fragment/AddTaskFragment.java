@@ -25,7 +25,9 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.Objects;
 
-
+/**
+ *  Fragment for managing tasks as a Manager
+ */
 public class AddTaskFragment extends Fragment {
     private FragmentAddTaskBinding binding;
     private AddTaskViewModel viewModel;
@@ -138,6 +140,7 @@ public class AddTaskFragment extends Fragment {
     private void observeViewModel(View view) {
         viewModel.getUsersLiveData().observe(getViewLifecycleOwner(), users -> {
             ArrayList<Item> items = new ArrayList<>();
+            items.add(Item.builder().name("None").value(false).obj(null).build());
             if (users != null) {
                 for (User user : users) {
                     items.add(Item.builder().name(user.firstName + " " + user.lastName).value(false).obj(user).build());
@@ -148,6 +151,7 @@ public class AddTaskFragment extends Fragment {
 
         viewModel.getTeamsLiveData().observe(getViewLifecycleOwner(), teams -> {
             ArrayList<Item> items = new ArrayList<>();
+            items.add(Item.builder().name("None").value(false).obj(null).build());
             if (teams != null) {
                 for (Team team : teams) {
                     items.add(Item.builder().name(team.getName()).value(false).obj(team).build());
@@ -266,13 +270,18 @@ public class AddTaskFragment extends Fragment {
 
             int status = (int) binding.statusSpinner.getSelectedItem().getObj();
 
-            if (binding.userInTaskSpinner.getSelectedItem() != null)
-                user = (User) binding.userInTaskSpinner.getSelectedItem().getObj();
+            if (binding.userInTaskSpinner.getSelectedItem() != null){
+                if(binding.userInTaskSpinner.getSelectedItem().getObj() != null){
+                    user = (User) binding.userInTaskSpinner.getSelectedItem().getObj();
+                }
+            }
 
-            if (binding.teamInTaskSpinner.getSelectedItem() != null) {
-                Team team = (Team) binding.teamInTaskSpinner.getSelectedItem().getObj();
-                teamInTask = new TeamInTask();
-                teamInTask.teamId = team.getTeamId();
+            if (binding.teamInTaskSpinner.getSelectedItem() != null ) {
+                if(binding.teamInTaskSpinner.getSelectedItem().getObj() != null){
+                    Team team = (Team) binding.teamInTaskSpinner.getSelectedItem().getObj();
+                    teamInTask = new TeamInTask();
+                    teamInTask.teamId = team.getTeamId();
+                }
             }
 
 

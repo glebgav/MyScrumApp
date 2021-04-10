@@ -9,6 +9,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Model for Items in SelectionSpinner and  MultiSelectionSpinner View classes
+ */
 @Data
 @Builder
 @Getter

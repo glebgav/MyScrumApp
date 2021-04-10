@@ -16,7 +16,9 @@ import com.example.myscrumapp.model.repository.TeamRepository;
 import com.example.myscrumapp.model.repository.UserRepository;
 
 import java.util.List;
-
+/**
+ *  ViewModel for managing users as a Manager
+ */
 public class AddUserViewModel extends AndroidViewModel {
     private final MutableLiveData<OperationResponseModel> userCreated;
     private final MutableLiveData<OperationResponseModel> userDeleted;

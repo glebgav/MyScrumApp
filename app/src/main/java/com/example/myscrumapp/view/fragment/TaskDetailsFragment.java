@@ -13,7 +13,9 @@ import com.example.myscrumapp.R;
 import com.example.myscrumapp.databinding.FragmentTaskDetailBinding;
 import com.example.myscrumapp.utils.GlobalConstants;
 import com.example.myscrumapp.viewmodel.TaskDetailsViewModel;
-
+/**
+ *  Fragment task details
+ */
 public class TaskDetailsFragment extends Fragment {
 
     private String taskUuid;

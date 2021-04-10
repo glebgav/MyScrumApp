@@ -1,13 +1,6 @@
 package com.example.myscrumapp.view.fragment;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.ViewModelProviders;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,17 +8,20 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.example.myscrumapp.R;
-import com.example.myscrumapp.databinding.FragmentAddTeamBinding;
 import com.example.myscrumapp.databinding.FragmentAddUserBinding;
 import com.example.myscrumapp.model.entity.Item;
 import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.model.entity.Team;
-import com.example.myscrumapp.model.entity.User;
 import com.example.myscrumapp.model.entity.UserRegisterDetails;
 import com.example.myscrumapp.model.network.OperationResponseStatus;
 import com.example.myscrumapp.utils.GlobalConstants;
-import com.example.myscrumapp.view.shared.MultiSelectionSpinner;
 import com.example.myscrumapp.viewmodel.AddUserViewModel;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -33,8 +29,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-
-
+/**
+ *  Fragment for managing users as a Manager
+ */
 public class AddUserFragment extends Fragment {
     private AddUserViewModel viewModel;
     private FragmentAddUserBinding binding;
@@ -74,10 +71,10 @@ public class AddUserFragment extends Fragment {
 
     }
 
-    private void configureListeners(){
+    private void configureListeners() {
         binding.saveUser.setOnClickListener(v -> {
             UserRegisterDetails userToCreate = checkInputAndCreateUser(binding, false);
-            if(userToCreate != null){
+            if (userToCreate != null) {
                 viewModel.setIsLoading(true);
                 viewModel.addUser(userToCreate);
             }
@@ -136,11 +133,11 @@ public class AddUserFragment extends Fragment {
 
     }
 
-    private void observeViewModel(View view){
+    private void observeViewModel(View view) {
         viewModel.getTeamsLiveData().observe(getViewLifecycleOwner(), teams -> {
             ArrayList<Item> items = new ArrayList<>();
-            if(teams != null){
-                for(Team team: teams){
+            if (teams != null) {
+                for (Team team : teams) {
                     items.add(Item.builder().name(team.getName()).value(false).obj(team).build());
                 }
             }
@@ -149,8 +146,8 @@ public class AddUserFragment extends Fragment {
 
         viewModel.getTasksLiveData().observe(getViewLifecycleOwner(), tasks -> {
             ArrayList<Item> items = new ArrayList<>();
-            if(tasks != null){
-                for(Task task: tasks){
+            if (tasks != null) {
+                for (Task task : tasks) {
                     items.add(Item.builder().name(task.getTitle()).value(false).obj(task).build());
                 }
             }
@@ -174,13 +171,13 @@ public class AddUserFragment extends Fragment {
 
 
         viewModel.getIsUserCreated().observe(getViewLifecycleOwner(), created -> {
-            if(created != null){
+            if (created != null) {
                 setToTeamView();
-                if(created.getOperationResult().equals(OperationResponseStatus.SUCCESS.name())){
+                if (created.getOperationResult().equals(OperationResponseStatus.SUCCESS.name())) {
                     viewModel.refreshUsers();
                     Snackbar.make(view, "User Created Successfully", Snackbar.LENGTH_LONG).show();
                 }
-                if(created.getOperationResult().equals(OperationResponseStatus.ERROR.name())){
+                if (created.getOperationResult().equals(OperationResponseStatus.ERROR.name())) {
                     Snackbar.make(view, created.getResponseMessage(), Snackbar.LENGTH_LONG).show();
                 }
             }
@@ -216,9 +213,9 @@ public class AddUserFragment extends Fragment {
         });
 
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            if(isLoading != null){
-                binding.userLoadingView.setVisibility(isLoading?View.VISIBLE: View.GONE);
-                if(isLoading) {
+            if (isLoading != null) {
+                binding.userLoadingView.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+                if (isLoading) {
                     setToLoadingView();
                 }
             }
@@ -236,7 +233,7 @@ public class AddUserFragment extends Fragment {
         return null;
     }
 
-    private  UserRegisterDetails checkInputAndCreateUser(FragmentAddUserBinding binding, boolean toUpdate){
+    private UserRegisterDetails checkInputAndCreateUser(FragmentAddUserBinding binding, boolean toUpdate) {
         boolean validInput = true;
 
         String email = Objects.requireNonNull(binding.editTextEmail.getText()).toString().trim();
@@ -245,50 +242,50 @@ public class AddUserFragment extends Fragment {
         String password = Objects.requireNonNull(binding.editTextPassword.getText()).toString().trim();
         Boolean isManager = binding.isManager.isChecked();
 
-        if(email.isEmpty()){
+        if (email.isEmpty()) {
             binding.editTextEmail.setError("Enter a valid email");
             binding.editTextEmail.requestFocus();
             validInput = false;
         }
-        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             binding.editTextEmail.setError("Enter a valid email");
             binding.editTextEmail.requestFocus();
             validInput = false;
         }
-        if(password.isEmpty()){
+        if (password.isEmpty()) {
             binding.editTextPassword.setError("Password required");
             binding.editTextPassword.requestFocus();
             validInput = false;
         }
-        if(password.length() < 6){
+        if (password.length() < 6) {
             binding.editTextPassword.setError("Password should be at least 6 characters long");
             binding.editTextPassword.requestFocus();
             validInput = false;
         }
-        if(firstName.isEmpty()){
+        if (firstName.isEmpty()) {
             binding.editTextFirstName.setError("First name required");
             binding.editTextFirstName.requestFocus();
             validInput = false;
         }
-        if(lastName.isEmpty()){
+        if (lastName.isEmpty()) {
             binding.editTextLastName.setError("Last name required");
             binding.editTextLastName.requestFocus();
             validInput = false;
         }
 
 
-        if(validInput){
+        if (validInput) {
             String userId = null;
             ArrayList<Team> teams = new ArrayList<>();
-            for(Item item:  binding.teamsInUserSpinner.getSelectedItems())
+            for (Item item : binding.teamsInUserSpinner.getSelectedItems())
                 teams.add((Team) item.getObj());
 
             ArrayList<Task> tasks = new ArrayList<>();
-            for(Item item:  binding.tasksInUserSpinner.getSelectedItems())
+            for (Item item : binding.tasksInUserSpinner.getSelectedItems())
                 tasks.add((Task) item.getObj());
 
             if (toUpdate) {
-                if(password.equals(GlobalConstants.FAKE_PASSWORD))
+                if (password.equals(GlobalConstants.FAKE_PASSWORD))
                     password = null;
 
                 if (binding.selectUserSpinner.getSelectedItem() != null) {
@@ -299,8 +296,8 @@ public class AddUserFragment extends Fragment {
                 }
             }
 
-            return new UserRegisterDetails(userId, firstName, lastName,password,email, isManager, teams,tasks);
-        }else{
+            return new UserRegisterDetails(userId, firstName, lastName, password, email, isManager, teams, tasks);
+        } else {
             return null;
         }
 
@@ -310,7 +307,7 @@ public class AddUserFragment extends Fragment {
         ArrayList<Item> items = new ArrayList<>();
         if (teams != null) {
             for (Team team : teams) {
-                items.add(Item.builder().name(team.getName() ).value(false).obj(team).build());
+                items.add(Item.builder().name(team.getName()).value(false).obj(team).build());
             }
         }
         return items;

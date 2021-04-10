@@ -15,7 +15,9 @@ import com.example.myscrumapp.model.repository.TeamRepository;
 import com.example.myscrumapp.model.repository.UserRepository;
 
 import java.util.List;
-
+/**
+ *  ViewModel for managing teams as a Manager
+ */
 public class AddTeamViewModel extends AndroidViewModel {
     private final MutableLiveData<OperationResponseModel> teamCreated;
     private final MutableLiveData<OperationResponseModel> teamDeleted;

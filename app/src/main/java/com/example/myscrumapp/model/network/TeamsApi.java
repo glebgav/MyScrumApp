@@ -12,6 +12,9 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
+/**
+ *network api interface for teams
+ */
 public interface TeamsApi {
     @GET("users/{userId}/teams")
     Single<List<Team>> getTeamsByUserId(@Header("authorization") String token, @Path("userId") String userId);

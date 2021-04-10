@@ -10,7 +10,9 @@ import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.model.repository.TaskRepository;
 import java.util.List;
 import lombok.Getter;
-
+/**
+ *  ViewModel for task list - for a specific team or my tasks
+ */
 @Getter
 public class TaskListViewModel extends AndroidViewModel {
 

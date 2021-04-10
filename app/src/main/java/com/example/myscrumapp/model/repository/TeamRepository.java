@@ -25,6 +25,9 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
+/**
+ * Repository for team entities (from REST service and local Room Db)
+ */
 public class TeamRepository {
 
     private final TeamDao teamDao;
@@ -49,11 +52,17 @@ public class TeamRepository {
         apiService = ApiService.getInstance();
     }
 
+    /**
+     *  force tasks retrieval from remote
+     */
     public void refreshBypassCache() {
         getAllTeamsFromRemote();
     }
 
-
+    /**
+     * get teams from local cache (Room Db) or from remote (depends on how much time has passed since last refresh)
+     * @return team list
+     */
     public MutableLiveData<List<Team>> getMyTeams() {
         Long updateTime = preferencesHelper.getUpdateTime();
         Long currentTime = System.nanoTime();
@@ -100,7 +109,10 @@ public class TeamRepository {
                         })
         );
     }
-
+    /**
+     * update team in local cache asynchronously and then in remote asynchronously
+     * @param team team to update
+     */
     public void updateTeam(Team team) {
         taskRunner.executeAsync(new TeamRepository.UpdateTeamInLocalTask(teamDao, team), result -> updateTeamInRemote(team));
     }
@@ -126,7 +138,10 @@ public class TeamRepository {
                         })
         );
     }
-
+    /**
+     * delete team in local cache asynchronously and then in remote asynchronously
+     * @param team team to delete
+     */
     public void deleteTeam(Team team) {
         LoggedInUser user = preferencesHelper.getUser();
         disposable.add(
@@ -151,7 +166,11 @@ public class TeamRepository {
     }
 
 
-
+    /**
+     * get all teams from remote asynchronously and insert them to local cache asynchronously , update
+     * MyTeams, AllTeams live data and update refresh time
+     * @return All teams from remote
+     */
     public MutableLiveData<List<Team>> getAllTeamsFromRemote() {
         LoggedInUser user = preferencesHelper.getUser();
         disposable.add(
@@ -262,20 +281,6 @@ public class TeamRepository {
             return list;
         }
     }
-
-    private static class GetAllTeamsFromLocalTask implements Callable<List<Team>> {
-        private final TeamDao teamDao;
-
-        public GetAllTeamsFromLocalTask(TeamDao teamDao) {
-            this.teamDao = teamDao;
-        }
-
-        @Override
-        public List<Team> call() {
-            return teamDao.getAllTeams();
-        }
-    }
-
 
 
     private static class GetMyTeamsFromLocalTask implements Callable<List<Team>> {

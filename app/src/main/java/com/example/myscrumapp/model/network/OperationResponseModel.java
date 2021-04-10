@@ -13,6 +13,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import retrofit2.HttpException;
 
+/**
+ * Model for Operation response from the server
+ */
 @Getter
 @Setter
 @AllArgsConstructor
@@ -23,14 +26,27 @@ public class OperationResponseModel {
     private String responseMessage;
 
 
+    /**
+     * @param operationName name of operation
+     * @return successful response template
+     */
     public static OperationResponseModel successfulResponse(String operationName){
         return new OperationResponseModel(operationName, OperationResponseStatus.SUCCESS.name(), "");
     }
 
+    /**
+     * @param operationName name of operation
+     * @param error error response from the server
+     * @return failed response template
+     */
     public static OperationResponseModel failedResponse(String operationName, Throwable error){
         return new OperationResponseModel(operationName, OperationResponseStatus.ERROR.name(), getErrorMessage(error));
     }
 
+    /**
+     * @param err exception
+     * @return String representation of error
+     */
     public static String getErrorMessage(Throwable err) {
         try {
             if(err instanceof java.net.SocketTimeoutException){

@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
+/**
+ * Model for task in local Room Db
+ */
 @Entity(tableName = "tasks")
 @Getter
 @Setter

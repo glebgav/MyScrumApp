@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 import com.example.myscrumapp.model.entity.LoggedInUser;
-
+/**
+ *  Helper Class for managing shared data that stored on phone storage securely
+ */
 public class SharedPreferencesHelper {
 
     private static final String PREF_TIME = "Pref time";
@@ -30,14 +32,26 @@ public class SharedPreferencesHelper {
         return instance;
     }
 
+    /**
+     * save time of last local Db refresh
+     * @param time time that local Db is refreshed
+     */
     public void saveUpdateTime(Long time){
         preferences.edit().putLong(PREF_TIME, time).apply();
     }
 
+    /**
+     * get time of last local Db refresh
+     * @return time of last local Db refresh
+     */
     public Long getUpdateTime(){
         return preferences.getLong(PREF_TIME,0);
     }
 
+    /**
+     * save logged in user details
+     * @param loggedInUser logged in user details
+     */
     public void saveUser(LoggedInUser loggedInUser){
         SharedPreferences.Editor editor = preferences.edit();
 
@@ -55,6 +69,10 @@ public class SharedPreferencesHelper {
         return !preferences.getString(USER_ID, DEFAULT_NONE).equals(DEFAULT_NONE);
     }
 
+    /**
+     * get logged in user details, including authorization token
+     * @return logged in user details
+     */
     public LoggedInUser getUser(){
         return new LoggedInUser(preferences.getString(USER_FIRST_NAME, DEFAULT_NONE),
                 preferences.getString(USER_ID, DEFAULT_NONE),
@@ -63,6 +81,9 @@ public class SharedPreferencesHelper {
                 preferences.getBoolean(IS_MANAGER, false));
     }
 
+    /**
+     * clear all shared preferences , used in a logout scenario
+     */
     public void clear(){
         SharedPreferences.Editor editor = preferences.edit();
         editor.clear();

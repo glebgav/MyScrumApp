@@ -1,37 +1,22 @@
 package com.example.myscrumapp.model.repository;
 
 import android.app.Application;
-
-import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
-
 import com.example.myscrumapp.model.entity.LoggedInUser;
-import com.example.myscrumapp.model.entity.Task;
-import com.example.myscrumapp.model.entity.Team;
 import com.example.myscrumapp.model.entity.User;
 import com.example.myscrumapp.model.entity.UserRegisterDetails;
 import com.example.myscrumapp.model.network.ApiService;
 import com.example.myscrumapp.model.network.OperationResponseModel;
-import com.example.myscrumapp.model.network.OperationResponseStatus;
-import com.example.myscrumapp.model.network.UsersApi;
-import com.example.myscrumapp.model.room.dao.TaskDao;
-import com.example.myscrumapp.model.room.db.MyDatabase;
 import com.example.myscrumapp.utils.SharedPreferencesHelper;
-import com.example.myscrumapp.utils.TaskRunner;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
-import lombok.SneakyThrows;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
+/**
+ * Repository for user entities (from REST service)
+ */
 public class UserRepository {
     private final ApiService apiService;
     private final MutableLiveData<OperationResponseModel> userIsCreated = new MutableLiveData<>();
@@ -47,6 +32,10 @@ public class UserRepository {
         apiService = ApiService.getInstance();
     }
 
+    /**
+     * add user to remote
+     * @param user user to add
+     */
     public void addUser(UserRegisterDetails user){
         disposable.add(
                 apiService.getUsersApi().createUser(user)
@@ -66,6 +55,10 @@ public class UserRepository {
         );
     }
 
+    /**
+     * delete user from remote
+     * @param userToDelete user to delete
+     */
     public void deleteUser(UserRegisterDetails userToDelete){
         LoggedInUser myUser = preferencesHelper.getUser();
         disposable.add(
@@ -87,7 +80,10 @@ public class UserRepository {
         );
     }
 
-
+    /**
+     * update user from remote
+     * @param userToUpdate user to update
+     */
     public void updateUser(UserRegisterDetails userToUpdate){
         LoggedInUser myUser = preferencesHelper.getUser();
         disposable.add(
@@ -115,6 +111,10 @@ public class UserRepository {
         return fetchAllFromRemote();
     }
 
+    /**
+     * get all details of user  from remote
+     * @return users with teams and tasks information
+     */
     public MutableLiveData<List<UserRegisterDetails>> getAllUsersWithTeamsAndTasks() {
         return fetchAllFromRemoteWithTeamsAndTasks();
     }

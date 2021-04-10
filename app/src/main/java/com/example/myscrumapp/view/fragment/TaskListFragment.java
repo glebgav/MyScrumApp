@@ -29,7 +29,9 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-
+/**
+ *  Fragment for task list - for a specific team or my tasks
+ */
 public class TaskListFragment extends Fragment {
     private String teamId;
     private TaskListViewModel viewModel;
@@ -160,7 +162,6 @@ public class TaskListFragment extends Fragment {
                 viewModel.getTaskLoadError().postValue(false);
                 tasksList.setVisibility(View.VISIBLE);
                 if(!teamId.equals(GlobalConstants.MY_TASKS_FRAGMENT_INDICATOR)) {
-                  //  viewModel.setTeamIdLiveData(teamId);
                     taskListAdapter.updateTasksList(tasks);
                 }
 

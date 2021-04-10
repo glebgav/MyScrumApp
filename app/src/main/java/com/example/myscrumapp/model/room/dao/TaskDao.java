@@ -10,7 +10,9 @@ import com.example.myscrumapp.model.entity.Task;
 import java.util.List;
 
 import retrofit2.http.DELETE;
-
+/**
+ * data access object for tasks
+ */
 @Dao
 public interface TaskDao {
     @Insert

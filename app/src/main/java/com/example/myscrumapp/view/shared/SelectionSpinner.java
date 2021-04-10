@@ -14,7 +14,9 @@ import com.example.myscrumapp.utils.GlobalConstants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
+/**
+ *  Custom implementation for an  AppCompatSpinner
+ */
 public class SelectionSpinner extends AppCompatSpinner implements
         DialogInterface.OnClickListener {
 

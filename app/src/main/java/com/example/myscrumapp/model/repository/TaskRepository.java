@@ -6,19 +6,13 @@ import com.example.myscrumapp.model.entity.LoggedInUser;
 import com.example.myscrumapp.model.entity.Task;
 import com.example.myscrumapp.model.network.ApiService;
 import com.example.myscrumapp.model.network.OperationResponseModel;
-import com.example.myscrumapp.model.network.OperationResponseStatus;
 import com.example.myscrumapp.model.room.dao.TaskDao;
 import com.example.myscrumapp.model.room.db.MyDatabase;
 import com.example.myscrumapp.utils.GlobalConstants;
 import com.example.myscrumapp.utils.SharedPreferencesHelper;
 import com.example.myscrumapp.utils.TaskRunner;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
@@ -26,8 +20,10 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import lombok.SneakyThrows;
-import retrofit2.HttpException;
 
+/**
+ * Repository for task entities (from REST service and local Room Db)
+ */
 public class TaskRepository {
 
     private final TaskDao taskDao;
@@ -51,12 +47,19 @@ public class TaskRepository {
         apiService = ApiService.getInstance();
     }
 
+    /**
+     *  force tasks retrieval from remote
+     */
     public void refreshBypassCache(){
 
         getAllTasksFromRemote();
     }
 
 
+    /**
+     * get tasks from local cache (Room Db) or from remote (depends on how much time has passed since last refresh)
+     * @return task list
+     */
     public MutableLiveData<List<Task>> getMyTasks(){
         Long updateTime = preferencesHelper.getUpdateTime();
         Long currentTime = System.nanoTime();
@@ -103,6 +106,10 @@ public class TaskRepository {
         return task;
     }
 
+    /**
+     * update task in local cache asynchronously and then in remote asynchronously
+     * @param task task to update
+     */
     public void updateTask(Task task){
         taskRunner.executeAsync(new UpdateTaskInLocalTask(taskDao, task), result -> updateInRemote(task));
     }
@@ -129,6 +136,10 @@ public class TaskRepository {
         );
     }
 
+    /**
+     * add task in remote asynchronously
+     * @param task task to add
+     */
     public void addTask(Task task){
         LoggedInUser user = preferencesHelper.getUser();
         disposable.add(
@@ -149,6 +160,10 @@ public class TaskRepository {
         );
     }
 
+    /**
+     * delete task in remote asynchronously and then locally asynchronously
+     * @param task task to delete
+     */
     public void deleteTask(Task task){
         LoggedInUser user = preferencesHelper.getUser();
         disposable.add(
@@ -172,6 +187,11 @@ public class TaskRepository {
     }
 
 
+    /**
+     * get all tasks from remote asynchronously and insert them to local cache asynchronously , update
+     * MyTasks, AllTasks live data sand save refresh time
+     * @return All tasks from remote
+     */
     public MutableLiveData<List<Task>> getAllTasksFromRemote() {
         LoggedInUser user = preferencesHelper.getUser();
         disposable.add(

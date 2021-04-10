@@ -21,6 +21,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 
+/**
+ *  main Activity of the app , all related UI logic start from here
+ */
 public class MainActivity extends AppCompatActivity {
     private NavController navController;
     private AppBarConfiguration mAppBarConfiguration;
@@ -63,12 +66,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
-/*        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());*/
-
-
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
@@ -77,8 +74,7 @@ public class MainActivity extends AppCompatActivity {
         TextView navUserEmail = headerView.findViewById(R.id.header_userEmail);
         navUsername.setText(sharedPreferencesHelper.getUser().firstName);
         navUserEmail.setText(sharedPreferencesHelper.getUser().email);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.homeFragment, R.id.teamListFragment,R.id.taskListFragment)
