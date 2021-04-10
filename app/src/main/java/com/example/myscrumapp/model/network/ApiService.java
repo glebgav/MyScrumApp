@@ -1,5 +1,7 @@
 package com.example.myscrumapp.model.network;
 
+import com.example.myscrumapp.utils.GlobalConstants;
+
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -9,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * and a single source for all network APIs
  */
 public class ApiService {
-    private static final String BASE_URL = "http://192.168.1.6:8080";
+    private static final String BASE_URL = GlobalConstants.API_SERVICE_URL;
 
     private static  ApiService instance;
     private final Retrofit retrofit;

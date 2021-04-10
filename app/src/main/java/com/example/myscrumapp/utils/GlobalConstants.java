@@ -14,6 +14,7 @@ public class GlobalConstants {
     public static final int INVALID_STATUS = -1;
     public static final String NON_EXISTENT_ID = "NONE";
     public static final String FAKE_PASSWORD = "FAKE_PASSWORD";
+    public static final String API_SERVICE_URL = "http://192.168.1.6:8080";
 
 
     /**
